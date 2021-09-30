@@ -2,7 +2,7 @@ import { React, Component } from "react";
 import '../../styles/home.css';
 
 import { Home, Search, NotificationsNone, Settings, Person, InsertEmoticon,
-        AddPhotoAlternate, AddAPhoto
+        AddPhotoAlternate, AddAPhoto, Add
 } from '@material-ui/icons';
 import InterestTag from "../../components/InterestTag";
 
@@ -44,13 +44,15 @@ class HomePage extends Component {
                     </div>
 
                     <div className="div-interests">
-                        <InterestTag text="Tecnologia"></InterestTag>
-                        <InterestTag text="Espaço"></InterestTag>
-                        <InterestTag text="Programação"></InterestTag>
-                        <InterestTag text="Astronomia"></InterestTag>
-                        <InterestTag text="Foguetes"></InterestTag>
-                        <InterestTag text="Games"></InterestTag>
-                        <InterestTag text="Computadores"></InterestTag>
+                        <InterestTag text="Tecnologia" styleClass="interest-tag" content="text"></InterestTag>
+                        <InterestTag text="Espaço" styleClass="interest-tag" content="text"></InterestTag>
+                        <InterestTag text="Programação" styleClass="interest-tag" content="text"></InterestTag>
+                        <InterestTag text="Astronomia" styleClass="interest-tag" content="text"></InterestTag>
+                        <InterestTag text="Foguetes" styleClass="interest-tag" content="text"></InterestTag>
+                        <InterestTag text="Games" styleClass="interest-tag" content="text"></InterestTag>
+                        <InterestTag text="Computadores" styleClass="interest-tag" content="text"></InterestTag>
+                        <InterestTag styleClass="rounded-interest-tag" content="icon"><Add/></InterestTag>
+                        
                     </div>
 
                 </div>
