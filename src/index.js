@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
-import HomePage from './pages/home';
 import './styles/global.css';
+import Rotas from './rotas';
 
 ReactDOM.render(
   <React.StrictMode>
-    <HomePage />
+    <Rotas />
   </React.StrictMode>,
   document.getElementById('root')
 );
