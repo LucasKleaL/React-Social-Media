@@ -33,7 +33,7 @@ class InterestTag extends Component {
             return <h1 className="interest-tag-text">{this.props.text}</h1>
         }
         else if (this.props.content == "icon") {
-            return <Add />
+            return <Add className="add-icon"/>
         }
         else {
             //
