@@ -18,6 +18,7 @@
     --green-up: #30B72D;
     --light-blue: #00D8FF;
     --red-fire: #FF0000;
+    --pink-purple: #7300ff;
 }
 
 body {
@@ -67,7 +68,9 @@ body {
 }
 
 .add-icon {
-    transform: scale(0.8);
+    transform: scale(0.7);
+    padding-bottom: 0.2rem;
+    padding-right: 0.1rem;
 }
 
 @media(max-width: 1080px) {

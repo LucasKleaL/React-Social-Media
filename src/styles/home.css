@@ -77,13 +77,15 @@
 
 .h2-username {
     color: var(--black);
-    font-size: medium;
+    font-size: 1.1rem;
+    font-weight: medium;
 }
 
 .p-username {
     color: var(--gray-line);
-    font-size: medium;
+    font-size: 0.8rem;
     cursor: pointer;
+    font-weight: medium;
 }
 
 .p-username:hover {
@@ -123,9 +125,11 @@
 }
 
 .hr-post-line {
-    width: 80%;
-    margin-left: 1.8rem;
-    background-color: var(--black);
+    width: 90%;
+    margin-left: 5%;
+    border: solid;
+    border-width: 0.01rem;
+    border-color: var(--black);
 }
 
 .post-icons {
@@ -136,15 +140,138 @@
 
 .div-timeline {
     width: 100%;
-    display: block;
     margin-top: 1rem;
+    align-items: center; 
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }
+
+/* post template on feed */
 
 .div-timeline-post {
     background-color: var(--white);
-    height: 15rem;
     width: 90%;
     border: 0;
     border-radius: 20px;
-    margin-left: 1rem;
+}
+
+.div-post-meta-data {
+    width: 100%;
+    height: 4rem;
+    display: flex;
+}
+
+.div-post-profile-img {
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--gray-line);
+    border-radius: 100%;
+    margin-top: 0.5rem;
+    margin-left: 5%;
+}
+
+.div-post-profile-user {
+    width: 60%;
+    margin-left: 0.5rem;
+    text-align: left;
+}
+
+.h2-post-username {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    padding-top: 1rem;
+    color: var(--black);
+    font-size: 0.8rem;
+}
+
+.p-post-username {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--gray-line);
+    font-size: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.p-post-time {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--gray-line);
+    font-size: 0.5rem;
+    padding-top: 1rem;
+    font-weight: 600;
+}
+
+.post-interest-tag {
+    background-color: var(--gray-tag);
+    width: 0 auto;
+    height: 0.8rem;
+    border-radius: 20px;
+    margin-left: 0.1rem;
+    margin-right: 0.8rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+.post-interest-tag-text {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 0.45rem;
+    padding-top: 0.05rem;
+    padding-left: 0.45rem;
+    padding-right: 0.45rem;
+    font-weight: medium;
+}
+
+.post-hr {
+    border: solid;
+    border-color: var(--black);
+    border-width: 0.5px;
+    width: 90%;
+    margin-left: 5%;
+}
+
+.h1-post-title {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--black);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    padding-top: 0.3rem;
+    margin-left: 5%;
+}
+
+.post-image {
+    width: 90%;
+    margin-top: 0.5rem;
+}
+
+.div-post-icons {
+    float: left;
+    margin-left: 5%;
+    display: flex;
+}
+
+.post-icon {
+    cursor: pointer;
+}
+
+.like-icon:hover {
+    color: var(--red-fire);
+}
+
+.share-icon:hover {
+    color: var(--pink-purple);
+}
+
+.comment-icon:hover {
+    color: var(--pink-purple);
+}
+
+.p-post-numbers {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--black);
+    font-size: 0.5rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
 }
