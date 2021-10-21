@@ -13,24 +13,35 @@ import FalconHeavyImg from "./../../public/falcon_heavy.png"
 
 function HomePage() {
 
-    let history = useHistory();
+    var history = useHistory();
 
     //user data bring from firebase
     const [userData, setUserData] = useState("");
+    const [userUid, setUserUid] = useState("")
     const [interesses, setInteresses] = useState([]);
 
     //new post attributes
     const [postDescText, setPostDescText] = useState("");
+    const [postImg, setPostImg] = useState("");
 
     useEffect(() => {
-        let uid = window.sessionStorage.getItem("uid");
+        
+        Firebase.auth().onAuthStateChanged((user)=>{
+            if(user){
+                setUserUid(user.uid);
+                let uid = user.uid;
+                Firebase.firestore().collection("usuario").doc(uid).get()
+                .then((snapshot) => {
+                console.log(snapshot.data());
+                setUserData(snapshot.data());
+                setInteresses(snapshot.data().interesses)
+                })
+            }
+            else {
+                history.push("/");
+            }
+        });
 
-        Firebase.firestore().collection("usuario").doc(uid).get()
-        .then((snapshot) => {
-            console.log(snapshot.data());
-            setUserData(snapshot.data());
-            setInteresses(snapshot.data().interesses)
-        })
     }, []);
 
     function signOut() {
@@ -43,7 +54,6 @@ function HomePage() {
         console.log("postPublish")
 
         let text = postDescText;
-        let uid = window.sessionStorage.getItem("uid");
         let name = userData.nome;
         let username = "";
         let postTag = "";
@@ -58,7 +68,9 @@ function HomePage() {
         let postShares = 0;
         let postUpvotes = 0;
 
-        await Firebase.firestore().collection("posts").doc().set({
+        let postUid;
+
+        await Firebase.firestore().collection("posts").add({
             post_comments: postComments,
             post_date_time: postDatetime,
             post_description: text,
@@ -67,9 +79,22 @@ function HomePage() {
             post_tag: postTag,
             post_upvotes: postUpvotes,
             user_name: name,
-            user_uid: uid,
+            user_uid: userUid,
             username: username
-        });
+        }).then((docRef) => {
+            postUid = docRef.id;
+        })
+
+        if(postImg) {
+            console.log("docRef: "+postUid)
+            await Firebase.storage().ref("post").child(postUid).put(postImg)
+            .then((e) => {
+                console.log("Upload da foto feito com sucesso")
+            })
+            .catch((e) => {
+                console.log("Erro ao realiar upload da foto")
+            })
+        }
 
     }
 
@@ -115,7 +140,7 @@ function HomePage() {
                     <hr className="hr-post-line"></hr>
 
                     <div style={{ "paddingLeft": "1rem", "paddingTop": "0.4rem" }}>
-                        <input type="file" id="addPostImg" style={{"display": "none"}}  />
+                        <input type="file" id="addPostImg" style={{"display": "none"}} onChange={(e) => {setPostImg(e.target.value) }} />
                         <label for="addPostImg">
                             <AddPhotoAlternate fontSize="small" className="post-icons" />
                         </label>    
