@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import Firebase from "./../../Firebase";
 import Registration from '../../components/registrationForm';
 import Login from '../../components/loginForm'
 import CustomizedDialogs from "../../components/dialog";
 import { makeStyles } from "@material-ui/core/styles"
 import { height } from "@mui/system";
 import '../../styles/login.css';
-
 
 const useStyles = makeStyles((theme) => ({
    root: {
@@ -29,14 +30,31 @@ const useStyles = makeStyles((theme) => ({
       alignItems: 'center'
    }
 }))
-function LoginPage() {
+
+function LandingPage() {
+
+   let history = useHistory();
+
+   useEffect(() => {
+
+      Firebase.auth().onAuthStateChanged((user) => {
+         if(user) {
+            history.push("/home");
+         }
+      })
+
+   }, []); 
+
    const classes = useStyles();
+
    return (
       <div className={classes.root}>
+
          <div className={classes.left}>
             <h2>Cras ultricies, felis rutrum lobortis varius, velit diam viverra urna, nec vestibulum tortor justo eu dolor.</h2>
             <h4>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h4>
          </div>
+
          <div className={classes.right}>
             <div className="divTitleGeral">
                <div className="titleEffectRight">
@@ -46,17 +64,18 @@ function LoginPage() {
                   <h4>Cadastre-se agora mesmo e ganhe 1000 coins!</h4>
                </div>
             </div>
-            
-            
+
             <CustomizedDialogs title="Entrar na rede" titleButton="Entrar">
                <Login />
             </CustomizedDialogs>
             <CustomizedDialogs title="Criar sua conta" titleButton="Cadastrar">
                <Registration />
             </CustomizedDialogs>
+
          </div>
+
       </div>
    )
 }
 
-export default LoginPage;
+export default LandingPage;
