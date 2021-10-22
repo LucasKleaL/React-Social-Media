@@ -18,6 +18,7 @@
     --green-up: #30B72D;
     --light-blue: #00D8FF;
     --red-fire: #FF0000;
+    --pink-purple: #7300ff;
 }
 
 body {
@@ -64,6 +65,12 @@ body {
     font-size: 0.6rem;
     font-weight: medium;
     padding-top: 0.1rem;
+}
+
+.add-icon {
+    transform: scale(0.7);
+    padding-bottom: 0.2rem;
+    padding-right: 0.1rem;
 }
 
 @media(max-width: 1080px) {

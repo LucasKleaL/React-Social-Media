@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from "react-router-dom";
+import { Redirect } from 'react-router'
 import { Grid,Paper, Avatar, TextField, Button, Typography,Link } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -7,12 +9,21 @@ import firebase from "../Firebase";
 
 
 function App(){
+
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
+
+    let history = useHistory();
+
     function logar() {
         firebase.auth().signInWithEmailAndPassword(email, senha)
-        .then(()=>{
-          console.log("gravou")
+        .then( async (usuario)=>{
+
+          let uid = usuario.user.uid;
+          window.sessionStorage.setItem("uid", uid)
+
+          history.push("/");
+
         }).catch((error)=>{
           if(error.code === 'auth/weak-password'){
             alert('A senha é muito fraca!')

@@ -5,7 +5,7 @@ import LoginPage from "./pages/Login";
 function App(){
     return(
         <ThemeProvider>
-            
+
         </ThemeProvider>
     )
 

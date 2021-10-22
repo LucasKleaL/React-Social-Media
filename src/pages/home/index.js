@@ -1,94 +1,345 @@
-import { React, Component } from "react";
+import { React, Component, useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import Firebase from '../../Firebase';
 import '../../styles/home.css';
 
 import { Home, Search, NotificationsNone, Settings, Person, InsertEmoticon,
-        AddPhotoAlternate, AddAPhoto, Add
+        AddPhotoAlternate, AddAPhoto, Add, ExitToApp, Whatshot, Share, ChatBubbleOutline
 } from '@material-ui/icons';
+import { Button } from "@material-ui/core";
+
 import InterestTag from "../../components/InterestTag";
+import FalconHeavyImg from "./../../public/falcon_heavy.png";
+import SetUpTextLogo from "./../../public/SetUpText.png";
 
+function HomePage() {
 
-class HomePage extends Component {
+    var history = useHistory();
 
-    constructor(props) {
+    //user data bring from firebase
+    const [userData, setUserData] = useState("");
+    const [userUid, setUserUid] = useState("")
+    const [interesses, setInteresses] = useState([]);
+    const [userImg, setUserImg] = useState();
 
-        super(props);
-        this.state = {
+    //new post attributes
+    const [postDescText, setPostDescText] = useState("");
+    const [postImg, setPostImg] = useState("");
 
+    //posts data bring from firebase
+    const [postsData, setPostsData] = useState([]);
+    const [actualPrintImg, setActualPrintImg] = useState();
+    const [actualPostUid, setActualPostUid] = useState();
+
+    useEffect(() => {
+        
+        Firebase.auth().onAuthStateChanged((user)=>{
+            if(user){
+                setUserUid(user.uid);
+                let uid = user.uid;
+                Firebase.firestore().collection("usuario").doc(uid).get()
+                .then((snapshot) => {
+                console.log(snapshot.data());
+                setUserData(snapshot.data());
+                setInteresses(snapshot.data().interesses)
+                })
+            }
+            else {
+                history.push("/");
+            }
+        });
+
+        getAllPosts();
+
+    }, []);
+
+    function signOut() {
+        Firebase.auth().signOut();
+        history.push("/");
+        console.log("logout")
+    }
+
+    async function postPublish() {
+        console.log("postPublish")
+
+        let text = postDescText;
+        let name = userData.nome;
+        let username = "";
+        let postTag = "";
+        
+        let dateTime = new Date();
+        let date = dateTime.getDate()+"/"+dateTime.getMonth()+"/"+dateTime.getFullYear() + " ";
+        let time = dateTime.getHours()+":"+dateTime.getMinutes()+":"+dateTime.getSeconds();
+        let postDatetime = date + time;
+
+        let postComments = 0;
+        let postLikes = 0;
+        let postShares = 0;
+        let postUpvotes = 0;
+
+        let postUid;
+
+        await Firebase.firestore().collection("posts").add({
+            post_comments: postComments,
+            post_date_time: postDatetime,
+            post_description: text,
+            post_likes: postLikes,
+            post_shares: postShares,
+            post_tag: postTag,
+            post_upvotes: postUpvotes,
+            user_name: name,
+            user_uid: userUid,
+            username: username
+        }).then((docRef) => {
+            postUid = docRef.id;
+        })
+
+        if(postImg) {
+            console.log("docRef: "+postUid)
+            await Firebase.storage().ref("post").child(postUid).put(postImg)
+            .then((e) => {
+                console.log("Upload da foto feito com sucesso")
+            })
+            .catch((e) => {
+                console.log("Erro ao realiar upload da foto")
+            })
         }
 
+        getAllPosts();
+
     }
 
-    render() {
+    async function getAllPosts() {
 
-        return (
+        await Firebase.firestore().collection("posts").get()
+        .then((snapshot)=>{
+            let snapshotArray = [];
+            snapshot.docs.map((doc) => snapshotArray.push([doc.data(), doc.id]));
+            //snapshotArray.push((snapshot.docs.map(doc => doc.data())));
+            console.log("snapshotArray: "+snapshotArray)
+            setPostsData(snapshotArray);
+        })
 
-            <div className="div-container-home">
+        console.log(postsData);
 
-                <div className="div-section div-section-left">
+    }
 
-                    <div className="div-header-logo"> 
-                        <h1 className="header-title">Social Media</h1>
-                    </div>
+    async function printPostImg(uid) {
 
-                    <div className="div-profile">
+        await Firebase.storage().ref("post").child(uid).getDownloadURL()
+        .then((url) => {
+            console.log("printPostImg "+url)
+            setActualPrintImg(url);
+        });
 
-                        <div className="div-profile-image">
-                            
-                        </div>
+    }
 
-                        <div className="div-profile-username">
-                            <h2 className="h2-username">Lucas Kusman Leal</h2>
-                            <p className="p-username">@lucaskleal</p>
-                        </div>
+    async function setProfileImg(e) {
 
-                    </div>
+        let file = e.target.files[0];
+        
+        await Firebase.storage().ref("usuario").child(userUid).put(file).
+        then(() => {
+            console.log("Foto de perfil atualizada com sucesso.")
+        })
+        .catch(() => {
+            console.log("Erro ao atualizar foto de perfil.");
+        })
 
-                    <div className="div-interests">
-                        <InterestTag text="Tecnologia" styleClass="interest-tag" content="text"></InterestTag>
-                        <InterestTag text="Espaço" styleClass="interest-tag" content="text"></InterestTag>
-                        <InterestTag text="Programação" styleClass="interest-tag" content="text"></InterestTag>
-                        <InterestTag text="Astronomia" styleClass="interest-tag" content="text"></InterestTag>
-                        <InterestTag text="Foguetes" styleClass="interest-tag" content="text"></InterestTag>
-                        <InterestTag text="Games" styleClass="interest-tag" content="text"></InterestTag>
-                        <InterestTag text="Computadores" styleClass="interest-tag" content="text"></InterestTag>
-                        <InterestTag styleClass="rounded-interest-tag" content="icon"><Add/></InterestTag>
-                        
-                    </div>
+        await Firebase.storage().ref("usuario").child(userUid).getDownloadURL()
+        .then((url) => {
+            setUserImg(url);
+        })
 
+    }
+
+    return (
+
+        <div className="div-container-home">
+
+            <div className="div-section div-section-left">
+
+                <div className="div-header-logo">
+                    <img src={SetUpTextLogo} className="header-logo-img"/>
                 </div>
 
-                <div className="div-section div-section-center">
+                <div className="div-profile">
 
-                    <div className="div-post-input">
-                        <input type="text" className="input-post-text" placeholder="No que você está pensando?"></input>
-                        <hr className="hr-post-line"></hr>
-
-                        <div style={{"paddingLeft": "1rem", "paddingTop": "0.4rem"}}>
-                            <AddPhotoAlternate fontSize="small" className="post-icons"/>
-                            <AddAPhoto fontSize="small" className="post-icons"/>
-                            <InsertEmoticon fontSize="small" className="post-icons"/>
+                    <label>
+                        <div className="div-profile-image" for="profileImgInput">
+                            <label for="profileImgInput">
+                                <Add fontSize="large" style={{"cursor": "pointer", "position": "absolute", "zIndex": "-1"}}/>
+                            </label>
+                            <input type="file" id="profileImgInput" style={{"display": "none"}} onChange={(e) => {setProfileImg(e)}}/>
+                            <img src={userImg} alt="" style={{"width": "100%", "height": "100%", "zIndex": "0"}}></img>
                         </div>
-
-                    </div>
-
-                </div>
-
-                <div className="div-section div-section-right">
-
-                    <div className="div-header-icons">
-                        <Settings className="header-icon"/>
-                        <NotificationsNone className="header-icon"/>
-                        <Search className="header-icon"/>
-                        <Home className="header-icon" title="Home Page"/>
-                    </div>
-
-                </div>
+                    </label>
                     
+                    <div className="div-profile-username">
+                        <h2 className="h2-username">{userData.nome}</h2>
+                        <p className="p-username">@lucaskleal</p>
+                    </div>
+
+                </div>
+
+                <div className="div-interests">
+                    {   
+                        interesses.map(interesse => (
+                            <InterestTag text={interesse} styleClass="interest-tag" content="text"/>
+                        ))
+                    }
+                    <InterestTag styleClass="rounded-interest-tag" content="icon"><Add /></InterestTag>
+
+                </div>
+
             </div>
 
-        )
+            <div className="div-section div-section-center">
 
-    }
+                <div className="div-post-input">
+                    <input type="text" className="input-post-text" placeholder="No que você está pensando?" onChange={(e) => {setPostDescText(e.target.value)}}></input>
+                    <hr className="hr-post-line"></hr>
+
+                    <div style={{ "paddingLeft": "1rem", "paddingTop": "0.4rem" }}>
+                        <input type="file" id="addPostImg" style={{"display": "none"}} onChange={(e) => {setPostImg(e.target.value) }} />
+                        <label for="addPostImg">
+                            <AddPhotoAlternate fontSize="small" className="post-icons" />
+                        </label>    
+                        <AddAPhoto fontSize="small" className="post-icons" />
+                        <InsertEmoticon fontSize="small" className="post-icons" />
+                        <div style={{"float": "right", "marginRight": "5%"}}>
+                            <Button className="post-publish-button" onClick={postPublish} style={{"backgroundColor": "black", "borderRadius": "50", "textTransform": "none"}}>
+                                <h1 className="h1-post-publish-button">Publicar</h1>
+                            </Button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="div-timeline">
+
+                    {
+                        postsData.map(post => {
+
+                            return(
+                                <div class="div-timeline-post">
+                
+                                <div class="div-post-meta-data">
+                
+                                    <div class="div-post-profile-img"></div>
+                
+                                    <div class="div-post-profile-user">
+                                        <h2 className="h2-post-username">{post[0].user_name}</h2>
+                                        <p className="p-post-username">@lucaskleal</p>
+                                        <p className="p-post-username">{post[1]}</p>
+                                    </div>
+                
+                                    <div>
+                                        <p className="p-post-time">{post[0].post_date_time}</p>
+                                        <InterestTag text={post[0].post_tag} styleClass="post-interest-tag" content="post-tag" />
+                                    </div>
+                
+                                </div>
+                
+                                <hr className="post-hr"></hr>
+                
+                                <div className="post-description">
+                                    <h1 className="h1-post-title">{post[0].post_description}</h1>
+                                </div>
+                
+                                <div>
+                                    <img className="post-image" src={actualPrintImg} />
+                                </div>
+                
+                                <div className="div-post-icons">
+                                    <div style={{ "textAlign": "center" }}>
+                                        <Whatshot fontSize="small" className="post-icon like-icon" />
+                                        <p className="p-post-numbers like-number">{post[0].post_likes}</p>
+                                    </div>
+                
+                                    <div style={{ "textAlign": "center" }}>
+                                        <Share fontSize="small" className="post-icon share-icon" style={{ "marginLeft": "0.2rem" }} />
+                                        <p className="p-post-numbers">{post[0].post_shares}</p>
+                                    </div>
+                
+                                    <div style={{ "textAlign": "center" }}>
+                                        <ChatBubbleOutline fontSize="small" className="post-icon comment-icon" style={{ "marginLeft": "0.35rem" }} />
+                                        <p className="p-post-numbers">{post[0].post_comments}</p>
+                                    </div>
+                
+                                </div>
+                
+                            </div>
+                            )
+                
+                        })
+                    }
+
+                    <div class="div-timeline-post">
+
+                        <div class="div-post-meta-data">
+
+                            <div class="div-post-profile-img"></div>
+
+                            <div class="div-post-profile-user">
+                                <h2 className="h2-post-username">Lucas</h2>
+                                <p className="p-post-username">@lucaskleal</p>
+                            </div>
+
+                            <div>
+                                <p className="p-post-time">Há 5 minutos</p>
+                                <InterestTag text="Foguete" styleClass="post-interest-tag" content="post-tag" />
+                            </div>
+
+                        </div>
+
+                        <hr className="post-hr"></hr>
+
+                        <div className="post-description">
+                            <h1 className="h1-post-title">Falcon Heavy rasgando os céus da Flórida</h1>
+                        </div>
+
+                        <div>
+                            <img className="post-image" src={FalconHeavyImg}/>
+                        </div>
+
+                        <div className="div-post-icons">
+                            <div style={{"textAlign": "center"}}>
+                                <Whatshot fontSize="small" className="post-icon like-icon" />
+                                <p className="p-post-numbers like-number">15</p>
+                            </div>
+
+                            <div style={{"textAlign": "center"}}>
+                                <Share fontSize="small" className="post-icon share-icon" style={{"marginLeft": "0.2rem"}} />
+                            </div>
+                            
+                            <div style={{"textAlign": "center"}}>
+                                <ChatBubbleOutline fontSize="small" className="post-icon comment-icon" style={{"marginLeft": "0.35rem"}} />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div className="div-section div-section-right">
+
+                <div className="div-header-icons">
+                    <ExitToApp className="header-icon" onClick={signOut} title="Logout"/>
+                    <Settings className="header-icon" title="Configurações"/>
+                    <NotificationsNone className="header-icon" title="Notificações"/>
+                    <Search className="header-icon" title="Pesquisar"/>
+                    <Home className="header-icon" title="Home Page" title="Página Inicial"/>
+                </div>
+
+            </div>
+
+        </div>
+
+    )
 
 }
 
