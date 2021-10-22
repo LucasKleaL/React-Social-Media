@@ -9,7 +9,8 @@ import { Home, Search, NotificationsNone, Settings, Person, InsertEmoticon,
 import { Button } from "@material-ui/core";
 
 import InterestTag from "../../components/InterestTag";
-import FalconHeavyImg from "./../../public/falcon_heavy.png"
+import FalconHeavyImg from "./../../public/falcon_heavy.png";
+import SetUpTextLogo from "./../../public/SetUpText.png";
 
 function HomePage() {
 
@@ -19,10 +20,16 @@ function HomePage() {
     const [userData, setUserData] = useState("");
     const [userUid, setUserUid] = useState("")
     const [interesses, setInteresses] = useState([]);
+    const [userImg, setUserImg] = useState();
 
     //new post attributes
     const [postDescText, setPostDescText] = useState("");
     const [postImg, setPostImg] = useState("");
+
+    //posts data bring from firebase
+    const [postsData, setPostsData] = useState([]);
+    const [actualPrintImg, setActualPrintImg] = useState();
+    const [actualPostUid, setActualPostUid] = useState();
 
     useEffect(() => {
         
@@ -41,6 +48,8 @@ function HomePage() {
                 history.push("/");
             }
         });
+
+        getAllPosts();
 
     }, []);
 
@@ -96,6 +105,52 @@ function HomePage() {
             })
         }
 
+        getAllPosts();
+
+    }
+
+    async function getAllPosts() {
+
+        await Firebase.firestore().collection("posts").get()
+        .then((snapshot)=>{
+            let snapshotArray = [];
+            snapshot.docs.map((doc) => snapshotArray.push([doc.data(), doc.id]));
+            //snapshotArray.push((snapshot.docs.map(doc => doc.data())));
+            console.log("snapshotArray: "+snapshotArray)
+            setPostsData(snapshotArray);
+        })
+
+        console.log(postsData);
+
+    }
+
+    async function printPostImg(uid) {
+
+        await Firebase.storage().ref("post").child(uid).getDownloadURL()
+        .then((url) => {
+            console.log("printPostImg "+url)
+            setActualPrintImg(url);
+        });
+
+    }
+
+    async function setProfileImg(e) {
+
+        let file = e.target.files[0];
+        
+        await Firebase.storage().ref("usuario").child(userUid).put(file).
+        then(() => {
+            console.log("Foto de perfil atualizada com sucesso.")
+        })
+        .catch(() => {
+            console.log("Erro ao atualizar foto de perfil.");
+        })
+
+        await Firebase.storage().ref("usuario").child(userUid).getDownloadURL()
+        .then((url) => {
+            setUserImg(url);
+        })
+
     }
 
     return (
@@ -105,15 +160,21 @@ function HomePage() {
             <div className="div-section div-section-left">
 
                 <div className="div-header-logo">
-                    <h1 className="header-title">Social Media</h1>
+                    <img src={SetUpTextLogo} className="header-logo-img"/>
                 </div>
 
                 <div className="div-profile">
 
-                    <div className="div-profile-image">
-
-                    </div>
-
+                    <label>
+                        <div className="div-profile-image" for="profileImgInput">
+                            <label for="profileImgInput">
+                                <Add fontSize="large" style={{"cursor": "pointer", "position": "absolute", "zIndex": "-1"}}/>
+                            </label>
+                            <input type="file" id="profileImgInput" style={{"display": "none"}} onChange={(e) => {setProfileImg(e)}}/>
+                            <img src={userImg} alt="" style={{"width": "100%", "height": "100%", "zIndex": "0"}}></img>
+                        </div>
+                    </label>
+                    
                     <div className="div-profile-username">
                         <h2 className="h2-username">{userData.nome}</h2>
                         <p className="p-username">@lucaskleal</p>
@@ -157,51 +218,62 @@ function HomePage() {
 
                 <div class="div-timeline">
 
-                    <div class="div-timeline-post">
+                    {
+                        postsData.map(post => {
 
-                        <div class="div-post-meta-data">
-
-                            <div class="div-post-profile-img"></div>
-
-                            <div class="div-post-profile-user">
-                                <h2 className="h2-post-username">Lucas</h2>
-                                <p className="p-post-username">@lucaskleal</p>
+                            return(
+                                <div class="div-timeline-post">
+                
+                                <div class="div-post-meta-data">
+                
+                                    <div class="div-post-profile-img"></div>
+                
+                                    <div class="div-post-profile-user">
+                                        <h2 className="h2-post-username">{post[0].user_name}</h2>
+                                        <p className="p-post-username">@lucaskleal</p>
+                                        <p className="p-post-username">{post[1]}</p>
+                                    </div>
+                
+                                    <div>
+                                        <p className="p-post-time">{post[0].post_date_time}</p>
+                                        <InterestTag text={post[0].post_tag} styleClass="post-interest-tag" content="post-tag" />
+                                    </div>
+                
+                                </div>
+                
+                                <hr className="post-hr"></hr>
+                
+                                <div className="post-description">
+                                    <h1 className="h1-post-title">{post[0].post_description}</h1>
+                                </div>
+                
+                                <div>
+                                    <img className="post-image" src={actualPrintImg} />
+                                </div>
+                
+                                <div className="div-post-icons">
+                                    <div style={{ "textAlign": "center" }}>
+                                        <Whatshot fontSize="small" className="post-icon like-icon" />
+                                        <p className="p-post-numbers like-number">{post[0].post_likes}</p>
+                                    </div>
+                
+                                    <div style={{ "textAlign": "center" }}>
+                                        <Share fontSize="small" className="post-icon share-icon" style={{ "marginLeft": "0.2rem" }} />
+                                        <p className="p-post-numbers">{post[0].post_shares}</p>
+                                    </div>
+                
+                                    <div style={{ "textAlign": "center" }}>
+                                        <ChatBubbleOutline fontSize="small" className="post-icon comment-icon" style={{ "marginLeft": "0.35rem" }} />
+                                        <p className="p-post-numbers">{post[0].post_comments}</p>
+                                    </div>
+                
+                                </div>
+                
                             </div>
-
-                            <div>
-                                <p className="p-post-time">Há 5 minutos</p>
-                                <InterestTag text="Foguete" styleClass="post-interest-tag" content="post-tag" />
-                            </div>
-
-                        </div>
-
-                        <hr className="post-hr"></hr>
-
-                        <div className="post-description">
-                            <h1 className="h1-post-title">Falcon Heavy rasgando os céus da Flórida</h1>
-                        </div>
-
-                        <div>
-                            <img className="post-image" src={FalconHeavyImg}/>
-                        </div>
-
-                        <div className="div-post-icons">
-                            <div style={{"textAlign": "center"}}>
-                                <Whatshot fontSize="small" className="post-icon like-icon" />
-                                <p className="p-post-numbers like-number">15</p>
-                            </div>
-
-                            <div style={{"textAlign": "center"}}>
-                                <Share fontSize="small" className="post-icon share-icon" style={{"marginLeft": "0.2rem"}} />
-                            </div>
-                            
-                            <div style={{"textAlign": "center"}}>
-                                <ChatBubbleOutline fontSize="small" className="post-icon comment-icon" style={{"marginLeft": "0.35rem"}} />
-                            </div>
-
-                        </div>
-
-                    </div>
+                            )
+                
+                        })
+                    }
 
                     <div class="div-timeline-post">
 

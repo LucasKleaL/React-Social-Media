@@ -41,6 +41,12 @@
     width: 100%;
 }
 
+.header-logo-img {
+    margin-left: 2rem;
+    margin-top: 0.2rem;
+    width: 12rem;
+}
+
 .header-icon {
     margin-right: 1rem;
     margin-top: 0.8rem;
@@ -61,6 +67,12 @@
     height: 4rem;
     background-color: var(--gray-line);
     border-radius: 100%;
+    align-items: center; 
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .div-profile-username {
