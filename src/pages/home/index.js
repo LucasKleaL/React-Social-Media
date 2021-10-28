@@ -9,6 +9,7 @@ import { Home, Search, NotificationsNone, Settings, Person, InsertEmoticon,
 import { Button } from "@material-ui/core";
 
 import InterestTag from "../../components/InterestTag";
+import FeedPost from "../../components/FeedPost";
 import FalconHeavyImg from "./../../public/falcon_heavy.png";
 import SetUpTextLogo from "./../../public/SetUpText.png";
 
@@ -24,12 +25,10 @@ function HomePage() {
 
     //new post attributes
     const [postDescText, setPostDescText] = useState("");
-    const [postImg, setPostImg] = useState("");
+    const [postImg, setPostImg] = useState();
 
     //posts data bring from firebase
     const [postsData, setPostsData] = useState([]);
-    const [actualPrintImg, setActualPrintImg] = useState();
-    const [actualPostUid, setActualPostUid] = useState();
 
     useEffect(() => {
         
@@ -42,6 +41,7 @@ function HomePage() {
                 console.log(snapshot.data());
                 setUserData(snapshot.data());
                 setInteresses(snapshot.data().interesses)
+                getProfileImg(uid);
                 })
             }
             else {
@@ -73,8 +73,6 @@ function HomePage() {
         let postDatetime = date + time;
 
         let postComments = 0;
-        let postLikes = 0;
-        let postShares = 0;
         let postUpvotes = 0;
 
         let postUid;
@@ -83,20 +81,20 @@ function HomePage() {
             post_comments: postComments,
             post_date_time: postDatetime,
             post_description: text,
-            post_likes: postLikes,
-            post_shares: postShares,
             post_tag: postTag,
             post_upvotes: postUpvotes,
             user_name: name,
             user_uid: userUid,
-            username: username
+            username: username,
+            users_liked: [],
+            users_shared: []
         }).then((docRef) => {
             postUid = docRef.id;
         })
 
         if(postImg) {
             console.log("docRef: "+postUid)
-            await Firebase.storage().ref("post").child(postUid).put(postImg)
+            await Firebase.storage().ref("posts").child(postUid).put(postImg)
             .then((e) => {
                 console.log("Upload da foto feito com sucesso")
             })
@@ -124,16 +122,6 @@ function HomePage() {
 
     }
 
-    async function printPostImg(uid) {
-
-        await Firebase.storage().ref("post").child(uid).getDownloadURL()
-        .then((url) => {
-            console.log("printPostImg "+url)
-            setActualPrintImg(url);
-        });
-
-    }
-
     async function setProfileImg(e) {
 
         let file = e.target.files[0];
@@ -146,11 +134,30 @@ function HomePage() {
             console.log("Erro ao atualizar foto de perfil.");
         })
 
-        await Firebase.storage().ref("usuario").child(userUid).getDownloadURL()
-        .then((url) => {
-            setUserImg(url);
-        })
+        getProfileImg();
 
+    }
+
+    async function getProfileImg(uid) {
+
+        if(uid) {
+            await Firebase.storage().ref("usuario").child(uid).getDownloadURL()
+            .then((url) => {
+                setUserImg(url);
+            });
+        }
+        else {
+            await Firebase.storage().ref("usuario").child(userUid).getDownloadURL()
+            .then((url) => {
+                setUserImg(url);
+            });
+        }
+        
+    }
+
+    function getPostImgFromInput(e) {
+        let file = e.target.files[0];
+        setPostImg(file);
     }
 
     return (
@@ -167,11 +174,14 @@ function HomePage() {
 
                     <label>
                         <div className="div-profile-image" for="profileImgInput">
+                            {/*
                             <label for="profileImgInput">
                                 <Add fontSize="large" style={{"cursor": "pointer", "position": "absolute", "zIndex": "-1"}}/>
                             </label>
+                            */
+                            }
                             <input type="file" id="profileImgInput" style={{"display": "none"}} onChange={(e) => {setProfileImg(e)}}/>
-                            <img src={userImg} alt="" style={{"width": "100%", "height": "100%", "zIndex": "0"}}></img>
+                            <img src={userImg} alt="" style={{"width": "100%", "height": "100%", "zIndex": "0", "borderRadius": "100%"}}></img>
                         </div>
                     </label>
                     
@@ -197,11 +207,11 @@ function HomePage() {
             <div className="div-section div-section-center">
 
                 <div className="div-post-input">
-                    <input type="text" className="input-post-text" placeholder="No que você está pensando?" onChange={(e) => {setPostDescText(e.target.value)}}></input>
+                    <input type="text" className="input-post-text" placeholder="No que você está pensando?" onChange={(e) => { setPostDescText(e.target.value) }}></input>
                     <hr className="hr-post-line"></hr>
 
                     <div style={{ "paddingLeft": "1rem", "paddingTop": "0.4rem" }}>
-                        <input type="file" id="addPostImg" style={{"display": "none"}} onChange={(e) => {setPostImg(e.target.value) }} />
+                        <input type="file" id="addPostImg" style={{"display": "none"}} onChange={(e) => { getPostImgFromInput(e) }} />
                         <label for="addPostImg">
                             <AddPhotoAlternate fontSize="small" className="post-icons" />
                         </label>    
@@ -219,107 +229,79 @@ function HomePage() {
                 <div class="div-timeline">
 
                     {
+                        
                         postsData.map(post => {
 
                             return(
-                                <div class="div-timeline-post">
-                
-                                <div class="div-post-meta-data">
-                
-                                    <div class="div-post-profile-img"></div>
-                
-                                    <div class="div-post-profile-user">
-                                        <h2 className="h2-post-username">{post[0].user_name}</h2>
-                                        <p className="p-post-username">@lucaskleal</p>
-                                        <p className="p-post-username">{post[1]}</p>
-                                    </div>
-                
-                                    <div>
-                                        <p className="p-post-time">{post[0].post_date_time}</p>
-                                        <InterestTag text={post[0].post_tag} styleClass="post-interest-tag" content="post-tag" />
-                                    </div>
-                
-                                </div>
-                
-                                <hr className="post-hr"></hr>
-                
-                                <div className="post-description">
-                                    <h1 className="h1-post-title">{post[0].post_description}</h1>
-                                </div>
-                
-                                <div>
-                                    <img className="post-image" src={actualPrintImg} />
-                                </div>
-                
-                                <div className="div-post-icons">
-                                    <div style={{ "textAlign": "center" }}>
-                                        <Whatshot fontSize="small" className="post-icon like-icon" />
-                                        <p className="p-post-numbers like-number">{post[0].post_likes}</p>
-                                    </div>
-                
-                                    <div style={{ "textAlign": "center" }}>
-                                        <Share fontSize="small" className="post-icon share-icon" style={{ "marginLeft": "0.2rem" }} />
-                                        <p className="p-post-numbers">{post[0].post_shares}</p>
-                                    </div>
-                
-                                    <div style={{ "textAlign": "center" }}>
-                                        <ChatBubbleOutline fontSize="small" className="post-icon comment-icon" style={{ "marginLeft": "0.35rem" }} />
-                                        <p className="p-post-numbers">{post[0].post_comments}</p>
-                                    </div>
-                
-                                </div>
-                
-                            </div>
+
+                                <FeedPost 
+                                    postUid = {post[1]}
+                                    userUid = {post[0].user_uid}
+                                    name = {post[0].user_name}
+                                    username = "@lucaskleal222"
+                                    datetime = {post[0].post_date_time}
+                                    interestTag = {post[0].post_tag}
+                                    description = {post[0].post_description}
+                                    comments = {post[0].post_comments}
+                                    usersLiked = {post[0].users_liked}
+                                    usersShared = {post[0].users_shared}
+                                />
+
                             )
-                
                         })
+                        
                     }
+                    
+                    {
+                        /*
+                        <div class="div-timeline-post">
 
-                    <div class="div-timeline-post">
+                            <div class="div-post-meta-data">
 
-                        <div class="div-post-meta-data">
+                                <div class="div-post-profile-img"></div>
 
-                            <div class="div-post-profile-img"></div>
+                                <div class="div-post-profile-user">
+                                    <h2 className="h2-post-username">Lucas</h2>
+                                    <p className="p-post-username">@lucaskleal</p>
+                                </div>
 
-                            <div class="div-post-profile-user">
-                                <h2 className="h2-post-username">Lucas</h2>
-                                <p className="p-post-username">@lucaskleal</p>
+                                <div>
+                                    <p className="p-post-time">Há 5 minutos</p>
+                                    <InterestTag text="Foguete" styleClass="post-interest-tag" content="post-tag" />
+                                </div>
+
+                            </div>
+
+                            <hr className="post-hr"></hr>
+
+                            <div className="post-description">
+                                <h1 className="h1-post-title">Falcon Heavy rasgando os céus da Flórida</h1>
                             </div>
 
                             <div>
-                                <p className="p-post-time">Há 5 minutos</p>
-                                <InterestTag text="Foguete" styleClass="post-interest-tag" content="post-tag" />
+                                <img className="post-image" src={FalconHeavyImg} />
+                            </div>
+
+                            <div className="div-post-icons">
+                                <div style={{ "textAlign": "center" }}>
+                                    <Whatshot fontSize="small" className="post-icon like-icon" />
+                                    <p className="p-post-numbers like-number">15</p>
+                                </div>
+
+                                <div style={{ "textAlign": "center" }}>
+                                    <Share fontSize="small" className="post-icon share-icon" style={{ "marginLeft": "0.2rem" }} />
+                                </div>
+
+                                <div style={{ "textAlign": "center" }}>
+                                    <ChatBubbleOutline fontSize="small" className="post-icon comment-icon" style={{ "marginLeft": "0.35rem" }} />
+                                </div>
+
                             </div>
 
                         </div>
-
-                        <hr className="post-hr"></hr>
-
-                        <div className="post-description">
-                            <h1 className="h1-post-title">Falcon Heavy rasgando os céus da Flórida</h1>
-                        </div>
-
-                        <div>
-                            <img className="post-image" src={FalconHeavyImg}/>
-                        </div>
-
-                        <div className="div-post-icons">
-                            <div style={{"textAlign": "center"}}>
-                                <Whatshot fontSize="small" className="post-icon like-icon" />
-                                <p className="p-post-numbers like-number">15</p>
-                            </div>
-
-                            <div style={{"textAlign": "center"}}>
-                                <Share fontSize="small" className="post-icon share-icon" style={{"marginLeft": "0.2rem"}} />
-                            </div>
-                            
-                            <div style={{"textAlign": "center"}}>
-                                <ChatBubbleOutline fontSize="small" className="post-icon comment-icon" style={{"marginLeft": "0.35rem"}} />
-                            </div>
-
-                        </div>
-
-                    </div>
+                        */
+                    }
+                    
 
                 </div>
 
