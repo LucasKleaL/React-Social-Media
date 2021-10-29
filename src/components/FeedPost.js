@@ -3,7 +3,9 @@ import Firebase from "./../Firebase";
 import './../styles/home.css';
 
 import { Whatshot, Share, ChatBubbleOutline }from '@material-ui/icons';
+import Modal from '@material-ui/core/Modal';
 
+import ShareModal from "./ShareModal";
 import InterestTag from "./InterestTag";
 
 function FeedPost(props) {
@@ -13,20 +15,26 @@ function FeedPost(props) {
     const [postImg, setPostImg] = useState();
     const [postUserImg, setPostUserImg] = useState();
 
-    //local post data attributes 
+    //local post attributes 
     const [likeActive, setLikeActive] = useState();
     const [likeStyle, setLikeStyle] = useState();
+
+    const [isShareOpen, setIsShareOpen] = useState(false);
+    const [open, setOpen] = useState();
     const [shareStyle, setShareStyle] = useState();
 
-    useEffect(() => {
-        
-        getAuth();
-        
+    useEffect(() => {   
+        getAuth();   
     }, []);
 
     useEffect(() => {
         isLiked(authUserUid);
     }, [likeActive])
+
+    useEffect(() => {   
+        getPostImg();
+        getPostUserImg();
+    });
 
     async function getAuth() {
         Firebase.auth().onAuthStateChanged((user)=>{
@@ -114,6 +122,42 @@ function FeedPost(props) {
 
     }
 
+    function clickShare() {
+
+        console.log("clickShare")
+
+        const handleOpen = () => {
+            setOpen(true);
+        };
+    
+        const handleClose = () => {
+            setOpen(false);
+        };
+
+        if(!isShareOpen) {
+            console.log("open")
+            handleOpen();
+            setIsShareOpen(true);
+        }
+        else {
+            setIsShareOpen(false);
+        }
+    
+        return (
+    
+            <Modal
+                open={open}
+                onClose={handleClose}
+            >
+    
+                <h1>Modal</h1>
+    
+            </Modal>
+    
+        )
+
+    }
+
     function printFeedPost() {
         return (
             
@@ -132,8 +176,8 @@ function FeedPost(props) {
                     </div>
 
                     <div>
-                        <p className="p-post-time">{props.datetime}</p>
-                        <InterestTag text={props.interestTag} styleClass="post-interest-tag" content="post-tag" />
+                        <p className="p-post-time">{props.datetime}</p>                  
+                        {props.interestTag ? <InterestTag text={props.interestTag} styleClass="post-interest-tag" content="post-tag" /> : null }     
                     </div>
 
                 </div>
@@ -155,7 +199,7 @@ function FeedPost(props) {
                     </div>
 
                     <div style={{ "textAlign": "center" }}>
-                        <Share fontSize="small" className="post-icon share-icon" style={{ "marginLeft": "0.2rem" }} />
+                        <Share fontSize="small" className="post-icon share-icon" onClick={clickShare} style={{ "marginLeft": "0.2rem" }} />
                         <p className="p-post-numbers">{props.usersShared.length}</p>
                     </div>
 

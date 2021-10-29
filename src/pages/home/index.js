@@ -1,4 +1,4 @@
-import { React, Component, useState, useEffect } from "react";
+import { React, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import Firebase from '../../Firebase';
 import '../../styles/home.css';
@@ -10,6 +10,7 @@ import { Button } from "@material-ui/core";
 
 import InterestTag from "../../components/InterestTag";
 import FeedPost from "../../components/FeedPost";
+
 import FalconHeavyImg from "./../../public/falcon_heavy.png";
 import SetUpTextLogo from "./../../public/SetUpText.png";
 
@@ -24,8 +25,22 @@ function HomePage() {
     const [userImg, setUserImg] = useState();
 
     //new post attributes
+    const tagInterests = [
+        'Esportes',
+        'Games',
+        'Tecnologia',
+        'Astronomia',
+        'Matemática',
+        'Filmes',
+        'Ciência',
+        'Memes',
+        'Séries',
+        'Fotografia',
+    ];
+    const [postTag, setPostTag] = useState("");
     const [postDescText, setPostDescText] = useState("");
     const [postImg, setPostImg] = useState();
+    const [isPosted, setIsPosted] = useState();
 
     //posts data bring from firebase
     const [postsData, setPostsData] = useState([]);
@@ -53,6 +68,12 @@ function HomePage() {
 
     }, []);
 
+    useEffect(() => {
+
+        getAllPosts();
+
+    }, [isPosted]);
+
     function signOut() {
         Firebase.auth().signOut();
         history.push("/");
@@ -65,7 +86,6 @@ function HomePage() {
         let text = postDescText;
         let name = userData.nome;
         let username = "";
-        let postTag = "";
         
         let dateTime = new Date();
         let date = dateTime.getDate()+"/"+dateTime.getMonth()+"/"+dateTime.getFullYear() + " ";
@@ -79,7 +99,7 @@ function HomePage() {
 
         await Firebase.firestore().collection("posts").add({
             post_comments: postComments,
-            post_date_time: postDatetime,
+            post_datetime: postDatetime,
             post_description: text,
             post_tag: postTag,
             post_upvotes: postUpvotes,
@@ -90,6 +110,7 @@ function HomePage() {
             users_shared: []
         }).then((docRef) => {
             postUid = docRef.id;
+            setIsPosted(true);
         })
 
         if(postImg) {
@@ -217,6 +238,18 @@ function HomePage() {
                         </label>    
                         <AddAPhoto fontSize="small" className="post-icons" />
                         <InsertEmoticon fontSize="small" className="post-icons" />
+
+                        <select className="select-post-tag" onChange={(e) => { setPostTag(e.target.value) }}>
+                            <option></option>
+                            {
+                                tagInterests.map(interest => {
+                                    return(
+                                        <option>{interest}</option>
+                                    )
+                                })
+                            }
+                        </select>
+
                         <div style={{"float": "right", "marginRight": "5%"}}>
                             <Button className="post-publish-button" onClick={postPublish} style={{"backgroundColor": "black", "borderRadius": "50", "textTransform": "none"}}>
                                 <h1 className="h1-post-publish-button">Publicar</h1>
@@ -239,7 +272,7 @@ function HomePage() {
                                     userUid = {post[0].user_uid}
                                     name = {post[0].user_name}
                                     username = "@lucaskleal222"
-                                    datetime = {post[0].post_date_time}
+                                    datetime = {post[0].post_datetime}
                                     interestTag = {post[0].post_tag}
                                     description = {post[0].post_description}
                                     comments = {post[0].post_comments}
