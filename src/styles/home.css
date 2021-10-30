@@ -1,0 +1,319 @@
+
+.div-container-home {
+    width: 100%;
+    height: 100%;
+}
+
+.div-section {
+    float: left;
+    height: 100% !important;
+    width: 33.33% !important; 
+}
+
+.div-section-center {
+    align-items: center; 
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    border-left-style: solid;
+    border-left-color: var(--black);
+    border-left: 1;
+    border-right-style: solid;
+    border-right-color: var(--black);
+    border-right: 1;
+}
+
+/* header components */
+
+.div-header-logo {
+    width: 100%;
+}
+
+.div-header-icons {
+    width: 100%;
+}
+
+.header-title {
+    margin-left: 2rem;
+    padding-top: 0.2rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 2rem;
+    width: 100%;
+}
+
+.header-logo-img {
+    margin-left: 2rem;
+    margin-top: 0.2rem;
+    width: 12rem;
+}
+
+.header-icon {
+    margin-right: 1rem;
+    margin-top: 0.8rem;
+    width: 100%;
+    float: right;
+    cursor: pointer;
+}
+
+.header-icon:active {
+    color: var(--pink-purple);
+}
+
+.div-profile {
+    margin-top: 4rem;
+    margin-left: 2rem;
+    width: 100%;
+    display: flex;
+}
+
+.div-profile-image {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 100%;
+    align-items: center; 
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.div-profile-username {
+    margin-left: 0.5rem;
+    margin-top: 0.6rem;
+}
+
+.h2-username {
+    color: var(--black);
+    font-size: 1.1rem;
+    font-weight: medium;
+}
+
+.p-username {
+    color: var(--gray-line);
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: medium;
+}
+
+.p-username:hover {
+    text-decoration: underline;
+}
+
+.div-interests {
+    margin-left: 2rem;
+    margin-top: 2rem;
+    width: 90%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(1rem, 6.5rem));
+}
+
+/* new post input */
+
+.div-post-input {
+    width: 90%;
+    height: 6rem;
+    background-color: var(--white);
+    margin-top: 0.8rem;
+    border-radius: 20px;
+}
+
+.input-post-text {
+    width: 90%;
+    height: 40%;
+    border: 0;
+    border-radius: 20px;
+    padding-left: 1rem;
+    font-size: 0.9rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-bottom: 0.3rem;
+    margin-top: 0.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--gray-dark-text);
+}
+
+.hr-post-line {
+    width: 90%;
+    margin-left: 5%;
+    border: solid;
+    border-width: 0.01rem;
+    border-color: var(--black);
+}
+
+.post-icons {
+    float: left;
+    margin-left: 0.5rem;
+    cursor: pointer;
+}
+
+.post-publish-button {
+    height: 1.5rem;
+    width: 3rem;
+    color: black;
+}
+
+.h1-post-publish-button {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--white);
+    font-size: 0.7rem;
+}
+
+.select-post-tag {
+    width: 4rem;
+    height: 1.2rem;
+    float: left;
+    margin-left: 0.5rem;
+    background-color: var(--gray-tag);
+    border-radius: 20px;
+    font-size: 0.5rem;
+}
+
+/* post template on feed */
+
+.div-timeline {
+    width: 100%;
+    margin-top: 0.5rem;
+    align-items: center; 
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.div-timeline-post {
+    background-color: var(--white);
+    width: 90%;
+    border: 0;
+    border-radius: 20px;
+    margin-top: 0.5rem;
+}
+
+.div-post-meta-data {
+    width: 100%;
+    height: 4rem;
+    display: flex;
+}
+
+.div-post-profile-img {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 100%;
+    margin-top: 0.5rem;
+    margin-left: 5%;
+}
+
+.div-post-profile-user {
+    width: 60%;
+    margin-left: 0.5rem;
+    text-align: left;
+}
+
+.h2-post-username {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    padding-top: 1rem;
+    color: var(--black);
+    font-size: 0.8rem;
+}
+
+.p-post-username {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--gray-line);
+    font-size: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.p-post-time {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--gray-line);
+    font-size: 0.5rem;
+    padding-top: 1rem;
+    font-weight: 600;
+}
+
+.post-interest-tag {
+    background-color: var(--gray-tag);
+    width: 0 auto;
+    height: 0.8rem;
+    border-radius: 20px;
+    margin-left: 0.1rem;
+    margin-right: 0.8rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+.post-interest-tag-text {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 0.45rem;
+    padding-top: 0.05rem;
+    padding-left: 0.45rem;
+    padding-right: 0.45rem;
+    font-weight: medium;
+}
+
+.post-hr {
+    border: solid;
+    border-color: var(--black);
+    border-width: 0.5px;
+    width: 90%;
+    margin-left: 5%;
+}
+
+.h1-post-title {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--black);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    padding-top: 0.3rem;
+    margin-left: 5%;
+}
+
+.post-image {
+    width: 90%;
+    margin-top: 0.5rem;
+}
+
+.div-post-icons {
+    float: left;
+    margin-left: 5%;
+    display: flex;
+}
+
+.post-icon {
+    cursor: pointer;
+}
+
+.like-icon-active {
+    color: var(--red-fire)
+}
+
+.like-icon:hover {
+    color: var(--red-fire);
+}
+
+.share-icon-active {
+    color: var(--pink-purple);
+}
+
+.share-icon:hover {
+    color: var(--pink-purple);
+}
+
+.comment-icon:hover {
+    color: var(--pink-purple);
+}
+
+.p-post-numbers {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: var(--black);
+    font-size: 0.5rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+}
