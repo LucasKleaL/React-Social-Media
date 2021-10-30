@@ -2,9 +2,6 @@
 
 /package-lock.json
 
-/Firebase.js
-firebase.js
-
 # dependencies
 /node_modules
 /.pnp
