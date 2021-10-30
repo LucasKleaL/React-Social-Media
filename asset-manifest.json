@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/static/css/main.befc2a02.chunk.css",
+    "main.js": "/static/js/main.e6fd7523.chunk.js",
+    "main.js.map": "/static/js/main.e6fd7523.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.ca513281.js",
+    "runtime-main.js.map": "/static/js/runtime-main.ca513281.js.map",
+    "static/js/2.7e1bcfd6.chunk.js": "/static/js/2.7e1bcfd6.chunk.js",
+    "static/js/2.7e1bcfd6.chunk.js.map": "/static/js/2.7e1bcfd6.chunk.js.map",
+    "static/js/3.022f1530.chunk.js": "/static/js/3.022f1530.chunk.js",
+    "static/js/3.022f1530.chunk.js.map": "/static/js/3.022f1530.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/main.befc2a02.chunk.css.map": "/static/css/main.befc2a02.chunk.css.map",
+    "static/js/2.7e1bcfd6.chunk.js.LICENSE.txt": "/static/js/2.7e1bcfd6.chunk.js.LICENSE.txt",
+    "static/media/falcon_heavy.edb917b8.png": "/static/media/falcon_heavy.edb917b8.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ca513281.js",
+    "static/js/2.7e1bcfd6.chunk.js",
+    "static/css/main.befc2a02.chunk.css",
+    "static/js/main.e6fd7523.chunk.js"
+  ]
+}
