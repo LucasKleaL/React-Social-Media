@@ -3,8 +3,9 @@ import { useHistory } from "react-router-dom";
 import Firebase from '../../Firebase';
 import '../../styles/home.css';
 
-import { Home, Search, NotificationsNone, Settings, Person, InsertEmoticon,
-        AddPhotoAlternate, AddAPhoto, Add, ExitToApp, Whatshot, Share, ChatBubbleOutline
+import {
+    Home, Search, NotificationsNone, Settings, Person, InsertEmoticon,
+    AddPhotoAlternate, AddAPhoto, Add, ExitToApp, Whatshot, Share, ChatBubbleOutline
 } from '@material-ui/icons';
 import { Button } from "@material-ui/core";
 
@@ -30,27 +31,29 @@ function HomePage() {
     //posts data bring from firebase
     const [postsData, setPostsData] = useState([]);
 
+
     useEffect(() => {
-        
-        Firebase.auth().onAuthStateChanged((user)=>{
-            if(user){
+        Firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
                 setUserUid(user.uid);
                 let uid = user.uid;
                 Firebase.firestore().collection("usuario").doc(uid).get()
-                .then((snapshot) => {
-                console.log(snapshot.data());
-                setUserData(snapshot.data());
-                setInteresses(snapshot.data().interesses)
-                getProfileImg(uid);
-                })
+                    .then((snapshot) => {
+                        console.log(snapshot.data());
+                        setUserData(snapshot.data());
+                        setInteresses(snapshot.data().interesses)
+                        getProfileImg(uid)
+                        
+                    })
             }
             else {
                 history.push("/");
             }
         });
 
-        getAllPosts();
-
+        interesses.forEach(element => {
+            getPostsByInterest(element)
+        });
     }, []);
 
     function signOut() {
@@ -65,11 +68,25 @@ function HomePage() {
         let text = postDescText;
         let name = userData.nome;
         let username = "";
-        let postTag = "";
-        
+        let postTag = [];
+        let postTagMultiple = [];
+        let count = 0;
+        interesses.forEach(element => {
+            if (count === 0) {
+                postTagMultiple.push(element)
+                postTag.push(element)
+                count++;
+            }
+            else {
+                postTagMultiple.push(", " + element)
+                postTag.push(element)
+                count++;
+            }
+        });
+
         let dateTime = new Date();
-        let date = dateTime.getDate()+"/"+dateTime.getMonth()+"/"+dateTime.getFullYear() + " ";
-        let time = dateTime.getHours()+":"+dateTime.getMinutes()+":"+dateTime.getSeconds();
+        let date = dateTime.getDate() + "/" + dateTime.getMonth() + "/" + dateTime.getFullYear() + " ";
+        let time = dateTime.getHours() + ":" + dateTime.getMinutes() + ":" + dateTime.getSeconds();
         let postDatetime = date + time;
 
         let postComments = 0;
@@ -82,6 +99,7 @@ function HomePage() {
             post_date_time: postDatetime,
             post_description: text,
             post_tag: postTag,
+            post_tagMultiple: postTagMultiple,
             post_upvotes: postUpvotes,
             user_name: name,
             user_uid: userUid,
@@ -89,70 +107,101 @@ function HomePage() {
             users_liked: [],
             users_shared: []
         }).then((docRef) => {
+            debugger
             postUid = docRef.id;
+            interesses.forEach(element => {
+                Firebase.firestore().collection("interesse").doc(element).update({
+                    idPosts: Firebase.firestore.FieldValue.arrayUnion(postUid)
+                })
+            });
         })
 
-        if(postImg) {
-            console.log("docRef: "+postUid)
+        if (postImg) {
+            console.log("docRef: " + postUid)
             await Firebase.storage().ref("posts").child(postUid).put(postImg)
-            .then((e) => {
-                console.log("Upload da foto feito com sucesso")
-            })
-            .catch((e) => {
-                console.log("Erro ao realiar upload da foto")
-            })
+                .then((e) => {
+                    console.log("Upload da foto feito com sucesso")
+                })
+                .catch((e) => {
+                    console.log("Erro ao realiar upload da foto")
+                })
         }
 
-        getAllPosts();
-
+        interesses.forEach(element => {
+            getPostsByInterest(element)
+        });
     }
+
 
     async function getAllPosts() {
-
         await Firebase.firestore().collection("posts").get()
-        .then((snapshot)=>{
-            let snapshotArray = [];
-            snapshot.docs.map((doc) => snapshotArray.push([doc.data(), doc.id]));
-            //snapshotArray.push((snapshot.docs.map(doc => doc.data())));
-            console.log("snapshotArray: "+snapshotArray)
-            setPostsData(snapshotArray);
-        })
-
+            .then((snapshot) => {
+                let snapshotArray = [];
+                snapshot.docs.map((doc) => snapshotArray.push([doc.data(), doc.id]));
+                //snapshotArray.push((snapshot.docs.map(doc => doc.data())));
+                setPostsData(snapshotArray);
+            })
         console.log(postsData);
-
     }
 
+
+    async function getPostsByInterest(interest) {
+        await Firebase.firestore().collection("interesse").doc(interest).get()
+            .then((snapshot) => {
+                let snapshotArray = [];
+                var postsData = snapshot.data();
+                if (postsData != undefined) {
+                    var postsIds = snapshot.data().idPosts;
+                    if(postsIds != undefined){
+                        debugger
+                        postsIds.forEach(element => {
+                            debugger
+                            Firebase.firestore().collection("posts").doc(element).get()
+                                .then((snapshot) => {
+                                    snapshotArray.push([snapshot.data(), snapshot.id])
+                                    setPostsData(snapshotArray);
+                                })
+                        })
+                    }
+                }
+            });
+    }
+
+    
     async function setProfileImg(e) {
 
         let file = e.target.files[0];
-        
+
         await Firebase.storage().ref("usuario").child(userUid).put(file).
-        then(() => {
-            console.log("Foto de perfil atualizada com sucesso.")
-        })
-        .catch(() => {
-            console.log("Erro ao atualizar foto de perfil.");
-        })
+            then(() => {
+                console.log("Foto de perfil atualizada com sucesso.")
+            })
+            .catch(() => {
+                console.log("Erro ao atualizar foto de perfil.");
+            })
 
         getProfileImg();
-
     }
 
     async function getProfileImg(uid) {
+        var test = Firebase.storage().ref(uid).listAll()
 
-        if(uid) {
+
+
+        if (uid) {
             await Firebase.storage().ref("usuario").child(uid).getDownloadURL()
-            .then((url) => {
-                setUserImg(url);
-            });
+                .then((url) => {
+
+                    setUserImg(url);
+                });
         }
         else {
             await Firebase.storage().ref("usuario").child(userUid).getDownloadURL()
-            .then((url) => {
-                setUserImg(url);
-            });
+                .then((url) => {
+
+                    setUserImg(url);
+                });
         }
-        
     }
 
     function getPostImgFromInput(e) {
@@ -167,7 +216,7 @@ function HomePage() {
             <div className="div-section div-section-left">
 
                 <div className="div-header-logo">
-                    <img src={SetUpTextLogo} className="header-logo-img"/>
+                    <img src={SetUpTextLogo} className="header-logo-img" />
                 </div>
 
                 <div className="div-profile">
@@ -180,11 +229,11 @@ function HomePage() {
                             </label>
                             */
                             }
-                            <input type="file" id="profileImgInput" style={{"display": "none"}} onChange={(e) => {setProfileImg(e)}}/>
-                            <img src={userImg} alt="" style={{"width": "100%", "height": "100%", "zIndex": "0", "borderRadius": "100%"}}></img>
+                            <input type="file" id="profileImgInput" style={{ "display": "none" }} onChange={(e) => { setProfileImg(e) }} />
+                            <img src={userImg} alt="" style={{ "width": "100%", "height": "100%", "zIndex": "0", "borderRadius": "100%" }}></img>
                         </div>
                     </label>
-                    
+
                     <div className="div-profile-username">
                         <h2 className="h2-username">{userData.nome}</h2>
                         <p className="p-username">@lucaskleal</p>
@@ -193,9 +242,9 @@ function HomePage() {
                 </div>
 
                 <div className="div-interests">
-                    {   
+                    {
                         interesses.map(interesse => (
-                            <InterestTag text={interesse} styleClass="interest-tag" content="text"/>
+                            <InterestTag text={interesse} styleClass="interest-tag" content="text" />
                         ))
                     }
                     <InterestTag styleClass="rounded-interest-tag" content="icon"><Add /></InterestTag>
@@ -211,14 +260,14 @@ function HomePage() {
                     <hr className="hr-post-line"></hr>
 
                     <div style={{ "paddingLeft": "1rem", "paddingTop": "0.4rem" }}>
-                        <input type="file" id="addPostImg" style={{"display": "none"}} onChange={(e) => { getPostImgFromInput(e) }} />
+                        <input type="file" id="addPostImg" style={{ "display": "none" }} onChange={(e) => { getPostImgFromInput(e) }} />
                         <label for="addPostImg">
                             <AddPhotoAlternate fontSize="small" className="post-icons" />
-                        </label>    
+                        </label>
                         <AddAPhoto fontSize="small" className="post-icons" />
                         <InsertEmoticon fontSize="small" className="post-icons" />
-                        <div style={{"float": "right", "marginRight": "5%"}}>
-                            <Button className="post-publish-button" onClick={postPublish} style={{"backgroundColor": "black", "borderRadius": "50", "textTransform": "none"}}>
+                        <div style={{ "float": "right", "marginRight": "5%" }}>
+                            <Button className="post-publish-button" onClick={postPublish} style={{ "backgroundColor": "black", "borderRadius": "50", "textTransform": "none" }}>
                                 <h1 className="h1-post-publish-button">Publicar</h1>
                             </Button>
                         </div>
@@ -229,29 +278,29 @@ function HomePage() {
                 <div class="div-timeline">
 
                     {
-                        
+
                         postsData.map(post => {
 
-                            return(
+                            return (
 
-                                <FeedPost 
-                                    postUid = {post[1]}
-                                    userUid = {post[0].user_uid}
-                                    name = {post[0].user_name}
-                                    username = "@lucaskleal222"
-                                    datetime = {post[0].post_date_time}
-                                    interestTag = {post[0].post_tag}
-                                    description = {post[0].post_description}
-                                    comments = {post[0].post_comments}
-                                    usersLiked = {post[0].users_liked}
-                                    usersShared = {post[0].users_shared}
+                                <FeedPost
+                                    postUid={post[1]}
+                                    userUid={post[0].user_uid}
+                                    name={post[0].user_name}
+                                    username="@lucaskleal222"
+                                    datetime={post[0].post_date_time}
+                                    interestTag={post[0].post_tagMultiple}
+                                    description={post[0].post_description}
+                                    comments={post[0].post_comments}
+                                    usersLiked={post[0].users_liked}
+                                    usersShared={post[0].users_shared}
                                 />
 
                             )
                         })
-                        
+
                     }
-                    
+
                     {
                         /*
                         <div class="div-timeline-post">
@@ -301,7 +350,7 @@ function HomePage() {
                         </div>
                         */
                     }
-                    
+
 
                 </div>
 
@@ -310,11 +359,11 @@ function HomePage() {
             <div className="div-section div-section-right">
 
                 <div className="div-header-icons">
-                    <ExitToApp className="header-icon" onClick={signOut} title="Logout"/>
-                    <Settings className="header-icon" title="Configurações"/>
-                    <NotificationsNone className="header-icon" title="Notificações"/>
-                    <Search className="header-icon" title="Pesquisar"/>
-                    <Home className="header-icon" title="Home Page" title="Página Inicial"/>
+                    <ExitToApp className="header-icon" onClick={signOut} title="Logout" />
+                    <Settings className="header-icon" title="Configurações" />
+                    <NotificationsNone className="header-icon" title="Notificações" />
+                    <Search className="header-icon" title="Pesquisar" />
+                    <Home className="header-icon" title="Home Page" title="Página Inicial" />
                 </div>
 
             </div>

@@ -4,7 +4,8 @@ import Firebase from "./../../Firebase";
 import Registration from '../../components/registrationForm';
 import Login from '../../components/loginForm'
 import CustomizedDialogs from "../../components/dialog";
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles } from "@material-ui/core/styles";
+import SetUpTextLogo from "./../../public/SetUpText.png";
 import { height } from "@mui/system";
 import '../../styles/login.css';
 
@@ -51,8 +52,9 @@ function LandingPage() {
       <div className={classes.root}>
 
          <div className={classes.left}>
-            <h2>Cras ultricies, felis rutrum lobortis varius, velit diam viverra urna, nec vestibulum tortor justo eu dolor.</h2>
-            <h4>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h4>
+            <div className="center">
+                  <img src={SetUpTextLogo} className="logo-img"/>
+            </div>
          </div>
 
          <div className={classes.right}>
@@ -61,7 +63,7 @@ function LandingPage() {
                   <h1 className="titleMain">Conecte-se com o mundo!</h1>
                </div>
                <div className="subTitleRight">
-                  <h4>Cadastre-se agora mesmo e ganhe 1000 coins!</h4>
+                  <h4>Cadastre-se agora mesmo e ganhe um bônus inicial de 1000 moedas!</h4>
                </div>
             </div>
 

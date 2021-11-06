@@ -38,6 +38,7 @@ const names = [
     'Séries',
     'Fotografia',
 ];
+
 function App() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -58,6 +59,13 @@ function App() {
             interesses: interesses,
             saldo: 1000
           })
+          interesses.forEach(element => {
+          firebase.firestore().collection("interesse").doc(element)
+          .update({
+            idUsuarios: firebase.firestore.FieldValue.arrayUnion(value.user.uid)
+          });
+          });
+          
         console.log("gravou")
       }).catch((error) => {
         if (error.code === 'auth/weak-password') {
@@ -67,13 +75,7 @@ function App() {
         }
       });
   }
-  useEffect(() => {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        setMensagem("logado");
-      }
-    })
-  });
+
 
   const handleChange = (event) => {
     const {
@@ -98,7 +100,7 @@ function App() {
           <Typography variant='caption' gutterBottom>Preencha o formulário para criar a sua conta! : {mensagem}</Typography>
         </Grid>
         <div>
-          <TextField id="outlined-basic" label="Email" type="text" onChange={(e) => { setEmail(e.target.value) }} fullWidth required />
+          <TextField id="outlined-basic" label="Email" type="text" data-value="" onChange={(e) => { setEmail(e.target.value) }} fullWidth required />
         </div>
         <div>
           <TextField id="outlined-basic" label="Senha" type="password" onChange={(e) => { setSenha(e.target.value) }} fullWidth required />
@@ -106,7 +108,6 @@ function App() {
         <div>
           <TextField id="outlined-basic" label="Nome" type="text" onChange={(e) => { setNome(e.target.value) }} fullWidth required />
         </div>
-
         <div>
           <TextField id="outlined-basic" label="Data de nascimento" type="date" InputLabelProps={{ shrink: true }} onChange={(e) => { setDataNascimento(e.target.value) }} fullWidth required />
         </div>
