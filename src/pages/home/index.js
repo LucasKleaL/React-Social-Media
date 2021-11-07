@@ -37,6 +37,7 @@ function HomePage() {
                 let uid = user.uid;
                 Firebase.firestore().collection("usuario").doc(uid).get()
                     .then((snapshot) => {
+                        debugger
                         console.log(snapshot.data());
                         setUserData(snapshot.data());
                         setInteresses(snapshot.data().interesses)
@@ -55,6 +56,11 @@ function HomePage() {
             getPostsByInterest(element)
         });
     }, [interesses]);
+    useEffect(() => {
+        interesses.forEach(element => {
+            getPostsByInterest(element)
+        });
+    }, [saldo]);
 
     function signOut() {
         Firebase.auth().signOut();
@@ -131,7 +137,6 @@ function HomePage() {
             getPostsByInterest(element)
         });
     }
-
 
     async function getAllPosts() {
         await Firebase.firestore().collection("posts").get()
