@@ -43,17 +43,19 @@ function App() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [nome, setNome] = useState("");
+  const [usuario, setUsuario] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
   const [genero, setGenero] = useState("");
   const [interesses, setInteresses] = React.useState([]);
   const [mensagem, setMensagem] = useState("");
-
+  
   function cadastrar() {
     firebase.auth().createUserWithEmailAndPassword(email, senha)
       .then((value) => {
         firebase.firestore().collection("usuario").doc(value.user.uid)
           .set({
             nome: nome,
+            usuario: usuario,
             dataNascimento: dataNascimento,
             genero: genero,
             interesses: interesses,
@@ -75,7 +77,6 @@ function App() {
         }
       });
   }
-
 
   const handleChange = (event) => {
     const {
@@ -107,6 +108,9 @@ function App() {
         </div>
         <div>
           <TextField id="outlined-basic" label="Nome" type="text" onChange={(e) => { setNome(e.target.value) }} fullWidth required />
+        </div>
+        <div>
+          <TextField id="outlined-basic" label="Nome de usuário" type="text" onChange={(e) => { setUsuario(e.target.value) }} fullWidth required />
         </div>
         <div>
           <TextField id="outlined-basic" label="Data de nascimento" type="date" InputLabelProps={{ shrink: true }} onChange={(e) => { setDataNascimento(e.target.value) }} fullWidth required />

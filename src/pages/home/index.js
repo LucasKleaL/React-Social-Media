@@ -7,12 +7,13 @@ import {
     Home, Search, NotificationsNone, Settings, Person, InsertEmoticon,
     AddPhotoAlternate, AddAPhoto, Add, ExitToApp, Whatshot, Share, ChatBubbleOutline
 } from '@material-ui/icons';
-import { Button } from "@material-ui/core";
+import { Button, Grid } from "@material-ui/core";
 
 import InterestTag from "../../components/InterestTag";
 import FeedPost from "../../components/FeedPost";
 import FalconHeavyImg from "./../../public/falcon_heavy.png";
 import SetUpTextLogo from "./../../public/SetUpText.png";
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 function HomePage() {
 
@@ -43,14 +44,13 @@ function HomePage() {
                         setUserData(snapshot.data());
                         setInteresses(snapshot.data().interesses)
                         getProfileImg(uid)
-                        
+
                     })
             }
             else {
                 history.push("/");
             }
         });
-
         interesses.forEach(element => {
             getPostsByInterest(element)
         });
@@ -67,7 +67,7 @@ function HomePage() {
 
         let text = postDescText;
         let name = userData.nome;
-        let username = "";
+        let username = userData.usuario;
         let postTag = [];
         let postTagMultiple = [];
         let count = 0;
@@ -83,6 +83,7 @@ function HomePage() {
                 count++;
             }
         });
+
 
         let dateTime = new Date();
         let date = dateTime.getDate() + "/" + dateTime.getMonth() + "/" + dateTime.getFullYear() + " ";
@@ -152,7 +153,7 @@ function HomePage() {
                 var postsData = snapshot.data();
                 if (postsData != undefined) {
                     var postsIds = snapshot.data().idPosts;
-                    if(postsIds != undefined){
+                    if (postsIds != undefined) {
                         debugger
                         postsIds.forEach(element => {
                             debugger
@@ -167,7 +168,7 @@ function HomePage() {
             });
     }
 
-    
+
     async function setProfileImg(e) {
 
         let file = e.target.files[0];
@@ -220,7 +221,6 @@ function HomePage() {
                 </div>
 
                 <div className="div-profile">
-
                     <label>
                         <div className="div-profile-image" for="profileImgInput">
                             {/*
@@ -236,7 +236,7 @@ function HomePage() {
 
                     <div className="div-profile-username">
                         <h2 className="h2-username">{userData.nome}</h2>
-                        <p className="p-username">@lucaskleal</p>
+                        <p className="p-username">@{userData.usuario}</p>
                     </div>
 
                 </div>
@@ -276,9 +276,7 @@ function HomePage() {
                 </div>
 
                 <div class="div-timeline">
-
                     {
-
                         postsData.map(post => {
 
                             return (
@@ -287,7 +285,7 @@ function HomePage() {
                                     postUid={post[1]}
                                     userUid={post[0].user_uid}
                                     name={post[0].user_name}
-                                    username="@lucaskleal222"
+                                    username={"@" + post[0].username}
                                     datetime={post[0].post_date_time}
                                     interestTag={post[0].post_tagMultiple}
                                     description={post[0].post_description}
@@ -295,7 +293,6 @@ function HomePage() {
                                     usersLiked={post[0].users_liked}
                                     usersShared={post[0].users_shared}
                                 />
-
                             )
                         })
 
@@ -357,17 +354,30 @@ function HomePage() {
             </div>
 
             <div className="div-section div-section-right">
-
                 <div className="div-header-icons">
-                    <ExitToApp className="header-icon" onClick={signOut} title="Logout" />
-                    <Settings className="header-icon" title="Configurações" />
-                    <NotificationsNone className="header-icon" title="Notificações" />
-                    <Search className="header-icon" title="Pesquisar" />
-                    <Home className="header-icon" title="Home Page" title="Página Inicial" />
+                    
+                    <Grid container spacing={2} className="containerFuncoesPrincipais">
+                        <Grid item xs={2} className="saldoCoins">
+                            <a title="Saldo" class="tab-coins"><div class="coins"><span class="fire-coin"
+                            style={{
+                                backgroundImage: "url(" + "https://d3r6ceqp4shltl.cloudfront.net/assets/fire-coin_small-22c9cf075930f175532c837169d8b32130dafd9050eb81c102f8b30614e67f79.png" + ")",
+                            }}>
+                            </span><span class="coins-counter">{userData.saldo}</span></div></a>
+                        </Grid>
+                        <Grid item xs={1}>
+                            <a title="Recarregar UpCoins" class="icon-create-content" ><AddRoundedIcon></AddRoundedIcon></a>
+                        </Grid>
+                        
+                    </Grid>
+                    <div className="funcoesMenu">
+                        <ExitToApp className="header-icon" onClick={signOut} title="Logout" />
+                        <Settings className="header-icon" title="Configurações" />
+                        <NotificationsNone className="header-icon" title="Notificações" />
+                        <Search className="header-icon" title="Pesquisar" />
+                        <Home className="header-icon" title="Home Page" title="Página Inicial" />
+                    </div>
                 </div>
-
             </div>
-
         </div>
 
     )
