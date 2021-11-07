@@ -57,6 +57,13 @@ body {
 }
 .saldoCoins{
     padding-top: 0 !important;
+    margin-left: 40px;
+}
+.p-post-username{
+    font-size: 14px !important;
+}
+.h2-post-username{
+    font-size: 15px !important;
 }
 .coins .coins-counter {
     min-width: 30px;

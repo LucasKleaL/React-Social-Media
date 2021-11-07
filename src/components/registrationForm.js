@@ -14,6 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
+import DefaultProfileImg from "../public/default-profile.png";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -44,10 +45,20 @@ function App() {
   const [senha, setSenha] = useState("");
   const [nome, setNome] = useState("");
   const [usuario, setUsuario] = useState("");
+  const [userId, setUserId] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
   const [genero, setGenero] = useState("");
   const [interesses, setInteresses] = React.useState([]);
   const [mensagem, setMensagem] = useState("");
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+           setUserId = user.uid
+        }
+    });
+    
+}, []);
   
   function cadastrar() {
     firebase.auth().createUserWithEmailAndPassword(email, senha)
@@ -66,6 +77,13 @@ function App() {
           .update({
             idUsuarios: firebase.firestore.FieldValue.arrayUnion(value.user.uid)
           });
+          firebase.storage().ref("usuario").child(value.user.uid).put(DefaultProfileImg).
+            then(() => {
+                console.log("Foto de perfil atualizada com sucesso.")
+            })
+            .catch(() => {
+                console.log("Erro ao atualizar foto de perfil.");
+            })
           });
           
         console.log("gravou")
@@ -77,7 +95,20 @@ function App() {
         }
       });
   }
+  async function setProfileImg(e) {
 
+    let file = e.target.files[0];
+
+    await firebase.storage().ref("usuario").child(userId).put(file).
+        then(() => {
+            console.log("Foto de perfil atualizada com sucesso.")
+        })
+        .catch(() => {
+            console.log("Erro ao atualizar foto de perfil.");
+        })
+
+    
+}
   const handleChange = (event) => {
     const {
       target: { value },
@@ -111,6 +142,9 @@ function App() {
         </div>
         <div>
           <TextField id="outlined-basic" label="Nome de usuário" type="text" onChange={(e) => { setUsuario(e.target.value) }} fullWidth required />
+        </div>
+        <div>
+          <input id="outlined-basic"  type="hidden" value={DefaultProfileImg} onChange={(e) => { setProfileImg(e.target.value) }} fullWidth required />
         </div>
         <div>
           <TextField id="outlined-basic" label="Data de nascimento" type="date" InputLabelProps={{ shrink: true }} onChange={(e) => { setDataNascimento(e.target.value) }} fullWidth required />

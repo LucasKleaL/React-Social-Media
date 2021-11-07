@@ -19,9 +19,7 @@ function FeedPost(props) {
     const [shareStyle, setShareStyle] = useState();
 
     useEffect(() => {
-        
         getAuth();
-        
     }, []);
 
     useEffect(() => {
@@ -41,7 +39,6 @@ function FeedPost(props) {
             }
         });
     }
-
     async function getPostImg() {
         await Firebase.storage().ref("posts").child(props.postUid).getDownloadURL()
         .then((url) => {
@@ -52,6 +49,7 @@ function FeedPost(props) {
     async function getPostUserImg() {
         await Firebase.storage().ref("usuario").child(props.userUid).getDownloadURL()
         .then((url) => {
+            debugger
             setPostUserImg(url);
         });
     }
@@ -70,6 +68,7 @@ function FeedPost(props) {
                 liked = false;
             }
         }
+        
 
         if (liked) {
             setLikeActive(false);
@@ -80,16 +79,44 @@ function FeedPost(props) {
             })
         }
         else {
-            setLikeActive(true);
+            var saldo = 0;
+            var autorId = "";
             usersLiked.push(authUserUid);
-            await Firebase.firestore().collection("posts").doc(props.postUid)
-            .update({
-                users_liked: usersLiked
+            await Firebase.firestore().collection("usuario").doc(authUserUid).get()
+            .then((snapshot) => {
+                saldo = snapshot.data().saldo;
+                if(saldo >= 150){
+                    saldo = saldo - 150;
+                    Firebase.firestore().collection("usuario").doc(authUserUid)
+                            .update({
+                                saldo: saldo
+                            })
+                    Firebase.firestore().collection("posts").doc(props.postUid)
+                            .update({
+                            users_liked: usersLiked
+                            })
+                    Firebase.firestore().collection("posts").doc(props.postUid)
+                    .get()
+                    .then((snapshot) => {  
+                        Firebase.firestore().collection("usuario").doc(authUserUid).get()
+                                .then((snapshot) => {
+                                    saldo = snapshot.data().saldo;
+                                })
+                        autorId = snapshot.data().user_uid;
+                        Firebase.firestore().collection("usuario").doc(autorId)
+                            .update({
+                                saldo: saldo + 100
+                            })
+                    }) 
+                    setLikeActive(true);
+                }else{
+                    alert("Saldo insuficiente")
+                }
             })
         }
-
     }
 
+    
     function isLiked(uid) {
 
         let usersLiked = props.usersLiked;
@@ -128,7 +155,6 @@ function FeedPost(props) {
                     <div class="div-post-profile-user">
                         <h2 className="h2-post-username">{props.name}</h2>
                         <p className="p-post-username" id="username">{props.username}</p>
-                        <p className="p-post-username" id="postUid">{props.postUid}</p>
                     </div>
 
                     <div>

@@ -16,22 +16,19 @@ import SetUpTextLogo from "./../../public/SetUpText.png";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 function HomePage() {
-
     var history = useHistory();
-
     //user data bring from firebase
     const [userData, setUserData] = useState("");
     const [userUid, setUserUid] = useState("")
     const [interesses, setInteresses] = useState([]);
     const [userImg, setUserImg] = useState();
-
+    const [saldo, setSaldo] = useState();
     //new post attributes
     const [postDescText, setPostDescText] = useState("");
     const [postImg, setPostImg] = useState();
 
     //posts data bring from firebase
     const [postsData, setPostsData] = useState([]);
-
 
     useEffect(() => {
         Firebase.auth().onAuthStateChanged((user) => {
@@ -43,18 +40,21 @@ function HomePage() {
                         console.log(snapshot.data());
                         setUserData(snapshot.data());
                         setInteresses(snapshot.data().interesses)
+                        setSaldo(snapshot.data().saldo)
                         getProfileImg(uid)
-
                     })
             }
             else {
                 history.push("/");
             }
         });
+    }, []);
+
+    useEffect(() => {
         interesses.forEach(element => {
             getPostsByInterest(element)
         });
-    }, []);
+    }, [interesses]);
 
     function signOut() {
         Firebase.auth().signOut();
@@ -108,7 +108,6 @@ function HomePage() {
             users_liked: [],
             users_shared: []
         }).then((docRef) => {
-            debugger
             postUid = docRef.id;
             interesses.forEach(element => {
                 Firebase.firestore().collection("interesse").doc(element).update({
@@ -154,9 +153,7 @@ function HomePage() {
                 if (postsData != undefined) {
                     var postsIds = snapshot.data().idPosts;
                     if (postsIds != undefined) {
-                        debugger
                         postsIds.forEach(element => {
-                            debugger
                             Firebase.firestore().collection("posts").doc(element).get()
                                 .then((snapshot) => {
                                     snapshotArray.push([snapshot.data(), snapshot.id])
@@ -275,12 +272,12 @@ function HomePage() {
 
                 </div>
 
+
                 <div class="div-timeline">
                     {
+                        
                         postsData.map(post => {
-
                             return (
-
                                 <FeedPost
                                     postUid={post[1]}
                                     userUid={post[0].user_uid}
@@ -295,9 +292,7 @@ function HomePage() {
                                 />
                             )
                         })
-
                     }
-
                     {
                         /*
                         <div class="div-timeline-post">
@@ -347,10 +342,7 @@ function HomePage() {
                         </div>
                         */
                     }
-
-
                 </div>
-
             </div>
 
             <div className="div-section div-section-right">
@@ -367,7 +359,6 @@ function HomePage() {
                         <Grid item xs={1}>
                             <a title="Recarregar UpCoins" class="icon-create-content" ><AddRoundedIcon></AddRoundedIcon></a>
                         </Grid>
-                        
                     </Grid>
                     <div className="funcoesMenu">
                         <ExitToApp className="header-icon" onClick={signOut} title="Logout" />

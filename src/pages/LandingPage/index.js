@@ -63,7 +63,7 @@ function LandingPage() {
                   <h1 className="titleMain">Conecte-se com o mundo!</h1>
                </div>
                <div className="subTitleRight">
-                  <h4>Cadastre-se agora mesmo e ganhe um bônus inicial de 1000 moedas!</h4>
+                  <h4>Cadastre-se agora mesmo e ganhe um bônus inicial de 1000 UpCoins!</h4>
                </div>
             </div>
 
