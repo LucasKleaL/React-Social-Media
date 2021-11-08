@@ -59,7 +59,6 @@ function App(){
                     label="Lembre-se de mim"
                  />
                 <Button type='submit' color='primary' variant="contained" style={btnstyle} onClick={logar} fullWidth>Entrar</Button>
-                <Button type='submit' color='primary' variant="contained" style={btnstyle} onClick={sair} fullWidth>Sair</Button>
                 <Typography >
                      <Link href="#" >
                         Esqueceu sua senha?
