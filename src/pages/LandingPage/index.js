@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import Firebase from "./../../Firebase";
-import Registration from '../../components/registrationForm';
-import Login from '../../components/loginForm'
-import CustomizedDialogs from "../../components/dialog";
+import Registration from '../../components/RegistrationForm';
+import Login from '../../components/LoginForm'
+import CustomizedDialogs from "../../components/Dialog";
 import { makeStyles } from "@material-ui/core/styles";
 import SetUpTextLogo from "./../../public/SetUpText.png";
-import { height } from "@mui/system";
 import '../../styles/login.css';
 
 const useStyles = makeStyles((theme) => ({

@@ -172,6 +172,74 @@
     font-size: 0.5rem;
 }
 
+/* coins add and balance */
+
+.fire-coin{
+    background-image:url(https://d3r6ceqp4shltl.cloudfront.net/assets/fire-coin_small-22c9cf075930f175532c837169d8b32130dafd9050eb81c102f8b30614e67f79.png)
+}
+
+.coins .fire-coin {
+    width: 1.5rem;
+    height: 1.5rem;
+    float: left;
+    background-size: 1.5rem;
+}
+
+.coins {
+    font-weight: bold;
+    padding-right: 0.6rem;
+    height: 1.75rem;
+    width: 5.43rem;
+    line-height: 1.6rem;
+}
+
+.tab-coins {
+    top: 0.6rem;
+    padding: 0 1px;
+    height: 2.1rem;
+    border: 0;
+}
+
+.containerFuncoesPrincipais {
+    padding: 1.25rem;
+}
+
+.saldoCoins{
+    padding-top: 0 !important;
+    margin-left: 2.5rem;
+}
+
+.coins .coins-counter {
+    min-width: 2rem;
+    text-align: center;
+    float: left;
+    padding-left: 0.6rem;
+    color: rgb(12, 12, 12);
+}
+
+.coins, .coins_container .coins {
+    background-color: rgba(107, 97, 97, 0.2);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 50%);
+    padding: 2px 0px 2px 3px;
+    border-radius: 15px 4px 4px 15px;
+}
+
+.icon-create-content {
+    background-color: #7300ff;
+    color: #fff;
+    position: relative;
+    width: 27px;
+    padding: 0 1px;
+    margin-left: 10px;
+    height: 28px;
+    top: 12px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    display: block;
+    line-height: 28px;
+}
+
 /* post template on feed */
 
 .div-timeline {
@@ -215,17 +283,21 @@
 
 .h2-post-username {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    padding-top: 1rem;
+    padding-top: 0.7rem;
     color: var(--black);
-    font-size: 0.8rem;
+    font-size: 0.9rem;
 }
 
 .p-post-username {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     color: var(--gray-line);
-    font-size: 0.5rem;
+    font-size: 0.7rem;
     cursor: pointer;
     font-weight: 600;
+}
+
+.p-post-username:hover {
+    text-decoration: underline;
 }
 
 .p-post-time {
@@ -239,7 +311,7 @@
 .post-interest-tag {
     background-color: var(--gray-tag);
     width: 0 auto;
-    height: 0.8rem;
+    height: 0 auto;
     border-radius: 20px;
     margin-left: 0.1rem;
     margin-right: 0.8rem;
@@ -265,7 +337,7 @@
     margin-left: 5%;
 }
 
-.h1-post-title {
+.h1-post-description {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     color: var(--black);
     font-size: 1rem;
@@ -281,6 +353,7 @@
 }
 
 .div-post-icons {
+    width: 100%;
     float: left;
     margin-left: 5%;
     display: flex;
@@ -306,8 +379,12 @@
     color: var(--pink-purple);
 }
 
-.comment-icon:hover {
-    color: var(--pink-purple);
+.up-icon-active {
+    color: var(--green-up);
+}
+
+.up-icon:hover {
+    color: var(--green-up);
 }
 
 .p-post-numbers {
