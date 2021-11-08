@@ -1,33 +1,18 @@
 import { React, Component } from "react";
 import { Add } from '@material-ui/icons';
-import { createTheme } from "@material-ui/core";
 
 class InterestTag extends Component {
 
     constructor(props) {
 
         super(props);
-        this.state = {
+        this.state = {         
             
         }
 
     }
 
-    
-
     ifContent() {
-
-        const theme = createTheme({
-            components: {
-                Add: {
-                    styleOverrides: {
-                        root: {
-                            fontSize: "0.1rem",
-                        },
-                    },
-                },
-            },
-        });
 
         if (this.props.content == "text") {
             return <h1 className="interest-tag-text">{this.props.text}</h1>

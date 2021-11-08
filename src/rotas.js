@@ -1,6 +1,6 @@
 import {BrowserRouter, Route} from 'react-router-dom';
 import Home from './pages/Home'
-import Registration from './components/registrationForm'
+import Registration from './components/RegistrationForm'
 import LandingPage from './pages/LandingPage'
 
 const Rotas = () => {

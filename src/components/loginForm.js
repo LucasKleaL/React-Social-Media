@@ -8,7 +8,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import firebase from "../Firebase";
 
 
-function App(){
+function LoginForm(){
 
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
@@ -74,4 +74,4 @@ function App(){
     )
 }
 
-export default App
+export default LoginForm;

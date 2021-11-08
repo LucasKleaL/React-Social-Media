@@ -40,7 +40,7 @@ const names = [
     'Fotografia',
 ];
 
-function App() {
+function RegistrationForm() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [nome, setNome] = useState("");
@@ -192,4 +192,4 @@ function App() {
   )
 }
 
-export default App;
+export default RegistrationForm;

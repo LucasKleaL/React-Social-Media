@@ -4,15 +4,14 @@ import Firebase from '../../Firebase';
 import '../../styles/home.css';
 
 import {
-    Home, Search, NotificationsNone, Settings, Person, InsertEmoticon,
-    AddPhotoAlternate, AddAPhoto, Add, ExitToApp, Whatshot, Share, ChatBubbleOutline
+    Home, Search, NotificationsNone, Settings, InsertEmoticon,
+    AddPhotoAlternate, AddAPhoto, Add, ExitToApp
 } from '@material-ui/icons';
 import { Button, Grid } from "@material-ui/core";
 
 import InterestTag from "../../components/InterestTag";
 import FeedPost from "../../components/FeedPost";
 
-import FalconHeavyImg from "./../../public/falcon_heavy.png";
 import SetUpTextLogo from "./../../public/SetUpText.png";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
@@ -58,6 +57,7 @@ function HomePage() {
                         setInteresses(snapshot.data().interesses)
                         setSaldo(snapshot.data().saldo)
                         getProfileImg(uid)
+                        getAllPosts()
                     })
             }
             else {
@@ -66,16 +66,19 @@ function HomePage() {
         });
     }, []);
 
+    /*
     useEffect(() => {
         interesses.forEach(element => {
-            getPostsByInterest(element)
+            getPostsByInterest(element);
         });
     }, [interesses]);
+
     useEffect(() => {
         interesses.forEach(element => {
             getPostsByInterest(element)
         });
     }, [saldo]);
+    */
 
     function signOut() {
         Firebase.auth().signOut();
@@ -84,7 +87,6 @@ function HomePage() {
     }
 
     async function postPublish() {
-        console.log("postPublish")
 
         let text = postDescText;
         let name = userData.nome;
@@ -106,28 +108,29 @@ function HomePage() {
         });
 
 
-        let dateTime = new Date();
-        let date = dateTime.getDate() + "/" + dateTime.getMonth() + "/" + dateTime.getFullYear() + " ";
-        let time = dateTime.getHours() + ":" + dateTime.getMinutes() + ":" + dateTime.getSeconds();
-        let postDatetime = date + time;
-
-        let postComments = 0;
-        let postUpvotes = 0;
+        let datetime = new Date();
+        let postDatetime = datetime.toLocaleDateString("pt-br", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+        });
 
         let postUid;
 
         await Firebase.firestore().collection("posts").add({
-            post_comments: postComments,
             post_datetime: postDatetime,
             post_description: text,
             post_tag: postTag,
             post_tagMultiple: postTagMultiple,
-            post_upvotes: postUpvotes,
             user_name: name,
             user_uid: userUid,
             username: username,
             users_liked: [],
-            users_shared: []
+            users_shared: [],
+            users_upvoted: []
         }).then((docRef) => {
             postUid = docRef.id;
             setIsPosted(true);
@@ -140,7 +143,7 @@ function HomePage() {
                     console.log("Upload da foto feito com sucesso")
                 })
                 .catch((e) => {
-                    console.log("Erro ao realiar upload da foto")
+                    console.log("Erro ao realizar upload da foto")
                 })
         }
 
@@ -154,10 +157,8 @@ function HomePage() {
             .then((snapshot) => {
                 let snapshotArray = [];
                 snapshot.docs.map((doc) => snapshotArray.push([doc.data(), doc.id]));
-                //snapshotArray.push((snapshot.docs.map(doc => doc.data())));
                 setPostsData(snapshotArray);
             })
-        console.log(postsData);
     }
 
 
@@ -198,23 +199,17 @@ function HomePage() {
     }
 
     async function getProfileImg(uid) {
-        var test = Firebase.storage().ref(uid).listAll()
-
-
-
         if (uid) {
             await Firebase.storage().ref("usuario").child(uid).getDownloadURL()
-                .then((url) => {
-
-                    setUserImg(url);
-                });
+            .then((url) => {
+                setUserImg(url);
+            });
         }
         else {
             await Firebase.storage().ref("usuario").child(userUid).getDownloadURL()
-                .then((url) => {
-
-                    setUserImg(url);
-                });
+            .then((url) => {
+                setUserImg(url);
+            });
         }
     }
 
@@ -236,12 +231,6 @@ function HomePage() {
                 <div className="div-profile">
                     <label>
                         <div className="div-profile-image" for="profileImgInput">
-                            {/*
-                            <label for="profileImgInput">
-                                <Add fontSize="large" style={{"cursor": "pointer", "position": "absolute", "zIndex": "-1"}}/>
-                            </label>
-                            */
-                            }
                             <input type="file" id="profileImgInput" style={{ "display": "none" }} onChange={(e) => { setProfileImg(e) }} />
                             <img src={userImg} alt="" style={{ "width": "100%", "height": "100%", "zIndex": "0", "borderRadius": "100%" }}></img>
                         </div>
@@ -304,11 +293,12 @@ function HomePage() {
 
                 </div>
 
-
                 <div class="div-timeline">
                     {
-                        
+
+
                         postsData.map(post => {
+
                             return (
                                 <FeedPost
                                     postUid={post[1]}
@@ -318,88 +308,44 @@ function HomePage() {
                                     datetime={post[0].post_date_time}
                                     interestTag={post[0].post_tagMultiple}
                                     description={post[0].post_description}
-                                    comments={post[0].post_comments}
                                     usersLiked={post[0].users_liked}
                                     usersShared={post[0].users_shared}
+                                    usersUpvoted={post[0].users_upvoted}
                                 />
                             )
                         })
                     }
-                    {
-                        /*
-                        <div class="div-timeline-post">
-
-                            <div class="div-post-meta-data">
-
-                                <div class="div-post-profile-img"></div>
-
-                                <div class="div-post-profile-user">
-                                    <h2 className="h2-post-username">Lucas</h2>
-                                    <p className="p-post-username">@lucaskleal</p>
-                                </div>
-
-                                <div>
-                                    <p className="p-post-time">Há 5 minutos</p>
-                                    <InterestTag text="Foguete" styleClass="post-interest-tag" content="post-tag" />
-                                </div>
-
-                            </div>
-
-                            <hr className="post-hr"></hr>
-
-                            <div className="post-description">
-                                <h1 className="h1-post-title">Falcon Heavy rasgando os céus da Flórida</h1>
-                            </div>
-
-                            <div>
-                                <img className="post-image" src={FalconHeavyImg} />
-                            </div>
-
-                            <div className="div-post-icons">
-                                <div style={{ "textAlign": "center" }}>
-                                    <Whatshot fontSize="small" className="post-icon like-icon" />
-                                    <p className="p-post-numbers like-number">15</p>
-                                </div>
-
-                                <div style={{ "textAlign": "center" }}>
-                                    <Share fontSize="small" className="post-icon share-icon" style={{ "marginLeft": "0.2rem" }} />
-                                </div>
-
-                                <div style={{ "textAlign": "center" }}>
-                                    <ChatBubbleOutline fontSize="small" className="post-icon comment-icon" style={{ "marginLeft": "0.35rem" }} />
-                                </div>
-
-                            </div>
-
-                        </div>
-                        */
-                    }
                 </div>
+
             </div>
 
             <div className="div-section div-section-right">
+
                 <div className="div-header-icons">
+                      
+                    <ExitToApp className="header-icon" onClick={signOut} title="Logout" />
+                    <Settings className="header-icon" title="Configurações" />
+                    <NotificationsNone className="header-icon" title="Notificações" />
+                    <Search className="header-icon" title="Pesquisar" />
+                    <Home className="header-icon" title="Home Page" title="Página Inicial" />
                     
-                    <Grid container spacing={2} className="containerFuncoesPrincipais">
-                        <Grid item xs={2} className="saldoCoins">
-                            <a title="Saldo" class="tab-coins"><div class="coins"><span class="fire-coin"
-                            style={{
-                                backgroundImage: "url(" + "https://d3r6ceqp4shltl.cloudfront.net/assets/fire-coin_small-22c9cf075930f175532c837169d8b32130dafd9050eb81c102f8b30614e67f79.png" + ")",
-                            }}>
-                            </span><span class="coins-counter">{userData.saldo}</span></div></a>
-                        </Grid>
-                        <Grid item xs={1}>
-                            <a title="Recarregar UpCoins" class="icon-create-content" ><AddRoundedIcon></AddRoundedIcon></a>
-                        </Grid>
-                    </Grid>
-                    <div className="funcoesMenu">
-                        <ExitToApp className="header-icon" onClick={signOut} title="Logout" />
-                        <Settings className="header-icon" title="Configurações" />
-                        <NotificationsNone className="header-icon" title="Notificações" />
-                        <Search className="header-icon" title="Pesquisar" />
-                        <Home className="header-icon" title="Home Page" title="Página Inicial" />
-                    </div>
                 </div>
+
+                <div>
+                    <Grid container spacing={2} className="containerFuncoesPrincipais">
+                            <Grid item xs={2} className="saldoCoins">
+                                <a title="Saldo" class="tab-coins"><div class="coins"><span class="fire-coin"
+                                style={{
+                                    backgroundImage: "url(" + "https://d3r6ceqp4shltl.cloudfront.net/assets/fire-coin_small-22c9cf075930f175532c837169d8b32130dafd9050eb81c102f8b30614e67f79.png" + ")",
+                                }}>
+                                </span><span class="coins-counter">{userData.saldo}</span></div></a>
+                            </Grid>
+                            <Grid item xs={1}>
+                                <a title="Recarregar UpCoins" class="icon-create-content" ><AddRoundedIcon></AddRoundedIcon></a>
+                            </Grid>
+                    </Grid>
+                </div>
+
             </div>
         </div>
 

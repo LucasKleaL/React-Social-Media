@@ -2,7 +2,7 @@ import { React, useEffect, useState } from "react";
 import Firebase from "./../Firebase";
 import './../styles/home.css';
 
-import { Whatshot, Share, ChatBubbleOutline }from '@material-ui/icons';
+import { Whatshot, Share, ArrowUpward }from '@material-ui/icons';
 import Modal from '@material-ui/core/Modal';
 
 import ShareModal from "./ShareModal";
@@ -23,13 +23,20 @@ function FeedPost(props) {
     const [open, setOpen] = useState();
     const [shareStyle, setShareStyle] = useState();
 
+    const [upvoteActive, setUpvoteActive] = useState();
+    const [upvoteStyle, setUpvoteStyle] = useState();
+
     useEffect(() => {
         getAuth();
     }, []);
 
     useEffect(() => {
         isLiked(authUserUid);
-    }, [likeActive])
+    }, [likeActive]);
+
+    useEffect(() => {
+        isUpvoted(authUserUid);
+    }, [upvoteActive])
 
     useEffect(() => {   
         getPostImg();
@@ -41,6 +48,7 @@ function FeedPost(props) {
             if(user){
                 setAuthUserUid(user.uid);
                 isLiked(user.uid);
+                isUpvoted(user.uid);
                 getPostImg();
                 getPostUserImg();
             }
@@ -89,40 +97,12 @@ function FeedPost(props) {
             })
         }
         else {
-            var saldo = 0;
-            var autorId = "";
+            setLikeActive(true);
             usersLiked.push(authUserUid);
-            await Firebase.firestore().collection("usuario").doc(authUserUid).get()
-            .then((snapshot) => {
-                saldo = snapshot.data().saldo;
-                if(saldo >= 150){
-                    saldo = saldo - 150;
-                    Firebase.firestore().collection("usuario").doc(authUserUid)
-                            .update({
-                                saldo: saldo
-                            })
-                    Firebase.firestore().collection("posts").doc(props.postUid)
-                            .update({
-                            users_liked: usersLiked
-                            })
-                    Firebase.firestore().collection("posts").doc(props.postUid)
-                    .get()
-                    .then((snapshot) => {  
-                        Firebase.firestore().collection("usuario").doc(authUserUid).get()
-                                .then((snapshot) => {
-                                    saldo = snapshot.data().saldo;
-                                })
-                        autorId = snapshot.data().user_uid;
-                        Firebase.firestore().collection("usuario").doc(autorId)
-                            .update({
-                                saldo: saldo + 100
-                            })
-                    }) 
-                    setLikeActive(true);
-                }else{
-                    alert("Saldo insuficiente")
-                }
-            })
+            await Firebase.firestore().collection("posts").doc(props.postUid)
+            .update({
+                users_liked: usersLiked
+            });
         }
     }
 
@@ -153,38 +133,88 @@ function FeedPost(props) {
 
     function clickShare() {
 
-        console.log("clickShare")
+        //
 
-        const handleOpen = () => {
-            setOpen(true);
-        };
-    
-        const handleClose = () => {
-            setOpen(false);
-        };
+    }
 
-        if(!isShareOpen) {
-            console.log("open")
-            handleOpen();
-            setIsShareOpen(true);
+    async function clickUpvote() {
+
+        let usersUpvoted = props.usersUpvoted;
+        let upvoted = false;
+
+        for (var i = 0; i < usersUpvoted.length; i++) {
+            if (usersUpvoted[i] == authUserUid) {
+                upvoted = true;
+                break;
+            }
+            else {
+                upvoted = false;
+            }
+        }
+        
+
+        if (upvoted) {
+            alert("Você já deu um UpVote neste post!")
         }
         else {
-            setIsShareOpen(false);
+            var saldo = 0;
+            var autorId = "";
+            usersUpvoted.push(authUserUid);
+            await Firebase.firestore().collection("usuario").doc(authUserUid).get()
+            .then((snapshot) => {
+                saldo = snapshot.data().saldo;
+                if(saldo >= 150){
+                    saldo = saldo - 150;
+                    Firebase.firestore().collection("usuario").doc(authUserUid)
+                            .update({
+                                saldo: saldo
+                            })
+                    Firebase.firestore().collection("posts").doc(props.postUid)
+                            .update({
+                            users_upvoted: usersUpvoted
+                            })
+                    Firebase.firestore().collection("posts").doc(props.postUid)
+                    .get()
+                    .then((snapshot) => {  
+                        Firebase.firestore().collection("usuario").doc(authUserUid).get()
+                                .then((snapshot) => {
+                                    saldo = snapshot.data().saldo;
+                                })
+                        autorId = snapshot.data().user_uid;
+                        Firebase.firestore().collection("usuario").doc(autorId)
+                            .update({
+                                saldo: saldo + 100
+                            })
+                    }) 
+                    setLikeActive(true);
+                }else{
+                    alert("Saldo insuficiente")
+                }
+            })
         }
-    
-        return (
-    
-            <Modal
-                open={open}
-                onClose={handleClose}
-            >
-    
-                <h1>Modal</h1>
-    
-            </Modal>
-    
-        )
 
+    }
+
+    function isUpvoted(uid) {
+        let usersUpvoted = props.usersUpvoted;
+        let upvoted = false;
+
+        for (var i = 0; i < usersUpvoted.length; i++) {
+            if (usersUpvoted[i] == uid) {
+                upvoted = true;
+                break;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if (upvoted) {
+            setUpvoteStyle("post-icon up-icon-active");
+        }
+        else {
+            setUpvoteStyle("post-icon up-icon");
+        }
     }
 
     function printFeedPost() {
@@ -221,21 +251,28 @@ function FeedPost(props) {
                 </div>
 
                 <div className="div-post-icons">
-                    <div style={{ "textAlign": "center" }}>
-                        <Whatshot fontSize="small" className={likeStyle} onClick={clickLike} />
-                        <p className="p-post-numbers like-number">{props.usersLiked.length}</p>
+
+                    <div style={{"display": "flex", "width": "80%"}}>
+
+                        <div style={{ "textAlign": "center" }}>
+                            <Whatshot fontSize="small" className={likeStyle} onClick={clickLike} />
+                            <p className="p-post-numbers like-number">{props.usersLiked.length}</p>
+                        </div>
+
+                        <div style={{ "textAlign": "center" }}>
+                            <Share fontSize="small" className="post-icon share-icon" onClick={clickShare} style={{ "marginLeft": "0.2rem" }} />
+                            <p className="p-post-numbers">{props.usersShared.length}</p>
+                        </div>
+
                     </div>
 
-                    <div style={{ "textAlign": "center" }}>
-                        <Share fontSize="small" className="post-icon share-icon" onClick={clickShare} style={{ "marginLeft": "0.2rem" }} />
-                        <p className="p-post-numbers">{props.usersShared.length}</p>
+                    <div style={{ "float": "right" }}>
+                        <div style={{ "textAlign": "center" }}>
+                            <ArrowUpward fontSize="medium" className={upvoteStyle} onClick={clickUpvote} style={{ "marginLeft": "0.2rem"}} />
+                            <p className="p-post-numbers">{props.usersUpvoted.length}</p>
+                        </div>
                     </div>
-
-                    <div style={{ "textAlign": "center" }}>
-                        <ChatBubbleOutline fontSize="small" className="post-icon comment-icon" style={{ "marginLeft": "0.35rem" }} />
-                        <p className="p-post-numbers">{props.comments}</p>
-                    </div>
-
+                    
                 </div>
 
             </div>
