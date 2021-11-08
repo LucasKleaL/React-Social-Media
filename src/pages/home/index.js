@@ -57,7 +57,7 @@ function HomePage() {
                         setInteresses(snapshot.data().interesses)
                         setSaldo(snapshot.data().saldo)
                         getProfileImg(uid)
-                        getAllPosts()
+                        //getAllPosts()
                     })
             }
             else {
@@ -66,7 +66,7 @@ function HomePage() {
         });
     }, []);
 
-    /*
+    
     useEffect(() => {
         interesses.forEach(element => {
             getPostsByInterest(element);
@@ -78,7 +78,7 @@ function HomePage() {
             getPostsByInterest(element)
         });
     }, [saldo]);
-    */
+    
 
     function signOut() {
         Firebase.auth().signOut();
@@ -134,6 +134,11 @@ function HomePage() {
         }).then((docRef) => {
             postUid = docRef.id;
             setIsPosted(true);
+            interesses.forEach(element => {
+                Firebase.firestore().collection("interesse").doc(element).update({
+                    idPosts: Firebase.firestore.FieldValue.arrayUnion(postUid)
+                })
+            })
         })
 
         if (postImg) {
@@ -305,7 +310,7 @@ function HomePage() {
                                     userUid={post[0].user_uid}
                                     name={post[0].user_name}
                                     username={"@" + post[0].username}
-                                    datetime={post[0].post_date_time}
+                                    datetime={post[0].post_datetime}
                                     interestTag={post[0].post_tagMultiple}
                                     description={post[0].post_description}
                                     usersLiked={post[0].users_liked}
@@ -341,7 +346,7 @@ function HomePage() {
                                 </span><span class="coins-counter">{userData.saldo}</span></div></a>
                             </Grid>
                             <Grid item xs={1}>
-                                <a title="Recarregar UpCoins" class="icon-create-content" ><AddRoundedIcon></AddRoundedIcon></a>
+                                <a title="Recarregar UpCoins" class="icon-create-content" ><AddRoundedIcon style={{ "marginTop": "0.1rem", "marginLeft": "0.05rem" }} /></a>
                             </Grid>
                     </Grid>
                 </div>

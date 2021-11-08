@@ -243,7 +243,7 @@ function FeedPost(props) {
                 <hr className="post-hr"></hr>
 
                 <div className="post-description">
-                    <h1 className="h1-post-title">{props.description}</h1>
+                    <h1 className="h1-post-description">{props.description}</h1>
                 </div>
 
                 <div>
