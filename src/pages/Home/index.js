@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import Firebase from '../../Firebase';
 import '../../styles/home.css';
 
@@ -14,6 +14,7 @@ import FeedPost from "../../components/FeedPost";
 
 import SetUpTextLogo from "./../../public/SetUpText.png";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import { LinkedCameraSharp } from "@mui/icons-material";
 
 function HomePage() {
     var history = useHistory();
@@ -284,16 +285,13 @@ function HomePage() {
                                 })
                             }
                         </select>
-                        {/* <p>My name is Bob</p> 
-                        //<div style={{"float": "right", "marginRight": "5%"}}>
-                            <Button className="post-publish-button" onClick={postPublish} style={{"backgroundColor": "black", "borderRadius": "50", "textTransform": "none"}}></Button>
-                        </div>
-                        */}
+
                         <div style={{ "float": "right", "marginRight": "5%" }}>
                             <Button className="post-publish-button" onClick={postPublish} style={{ "backgroundColor": "black", "borderRadius": "50", "textTransform": "none" }}>
                                 <h1 className="h1-post-publish-button">Publicar</h1>
                             </Button>
                         </div>
+
                     </div>
 
                 </div>
@@ -346,7 +344,7 @@ function HomePage() {
                                 </span><span class="coins-counter">{userData.saldo}</span></div></a>
                             </Grid>
                             <Grid item xs={1}>
-                                <a title="Recarregar UpCoins" class="icon-create-content" ><AddRoundedIcon style={{ "marginTop": "0.1rem", "marginLeft": "0.05rem" }} /></a>
+                                <Link to="/upcoins"><a title="Recarregar UpCoins" class="icon-create-content" ><AddRoundedIcon style={{ "marginTop": "0.1rem", "marginLeft": "0.05rem" }} /></a></Link>
                             </Grid>
                     </Grid>
                 </div>
