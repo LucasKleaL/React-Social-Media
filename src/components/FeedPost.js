@@ -19,9 +19,11 @@ function FeedPost(props) {
     const [likeActive, setLikeActive] = useState();
     const [likeStyle, setLikeStyle] = useState();
 
+    const [shareActive, setShareActive] = useState();
+    const [shareStyle, setShareStyle] = useState();
+
     const [isShareOpen, setIsShareOpen] = useState(false);
     const [open, setOpen] = useState();
-    const [shareStyle, setShareStyle] = useState();
 
     const [upvoteActive, setUpvoteActive] = useState();
     const [upvoteStyle, setUpvoteStyle] = useState();
@@ -38,6 +40,10 @@ function FeedPost(props) {
         isUpvoted(authUserUid);
     }, [upvoteActive])
 
+    useEffect(() => {
+        isShared(authUserUid);
+    }, [shareActive])
+
     useEffect(() => {   
         getPostImg();
         getPostUserImg();
@@ -48,6 +54,7 @@ function FeedPost(props) {
             if(user){
                 setAuthUserUid(user.uid);
                 isLiked(user.uid);
+                isShared(user.uid);
                 isUpvoted(user.uid);
                 getPostImg();
                 getPostUserImg();
@@ -131,10 +138,35 @@ function FeedPost(props) {
 
     }
 
-    function clickShare() {
+    async function clickShare() {
+        let usersShared = props.usersShared;
+        let shared = false;
 
-        //
-
+        for (var i = 0; i < usersShared.length; i++) {
+            if (usersShared[i] == authUserUid) {
+                shared = true;
+                break;
+            }
+            else {
+                shared = false;
+            }
+        }
+        if (shared) {
+            alert("Você já compartilhou este post!")
+        }
+        else {
+            var saldo = 0;
+            var autorId = "";
+            usersShared.push(authUserUid);
+            await Firebase.firestore().collection("usuario").doc(authUserUid).get()
+            .then((snapshot) => {            
+                Firebase.firestore().collection("posts").doc(props.postUid)
+                        .update({
+                        users_shared: usersShared
+                        })
+                setShareActive(true);
+            })
+        }
     }
 
     async function clickUpvote() {
@@ -217,27 +249,44 @@ function FeedPost(props) {
         }
     }
 
+    function isShared(uid) {
+        let usersShared = props.usersShared;
+        let shared = false;
+
+        for (var i = 0; i < usersShared.length; i++) {
+            if (usersShared[i] == uid) {
+                shared = true;
+                break;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if (shared) {
+            setShareStyle("post-icon share-icon-active");
+        }
+        else {
+            setShareStyle("post-icon share-icon");
+        }
+    }
+
     function printFeedPost() {
         return (
-            
             <div>
-
+                
                 <div class="div-post-meta-data">
-
                     <div class="div-post-profile-img">
                         <img src={postUserImg} style={{ "width": "100%", "borderRadius": "100%" }} />
                     </div>
-
                     <div class="div-post-profile-user">
                         <h2 className="h2-post-username">{props.name}</h2>
                         <p className="p-post-username" id="username">{props.username}</p>
                     </div>
-
                     <div>
                         <p className="p-post-time">{props.datetime}</p>                  
                         {props.interestTag ? <InterestTag text={props.interestTag} styleClass="post-interest-tag" content="post-tag" /> : null }     
                     </div>
-
                 </div>
 
                 <hr className="post-hr"></hr>
@@ -251,28 +300,22 @@ function FeedPost(props) {
                 </div>
 
                 <div className="div-post-icons">
-
                     <div style={{"display": "flex", "width": "80%"}}>
-
                         <div style={{ "textAlign": "center" }}>
                             <Whatshot fontSize="small" className={likeStyle} onClick={clickLike} />
                             <p className="p-post-numbers like-number">{props.usersLiked.length}</p>
                         </div>
-
                         <div style={{ "textAlign": "center" }}>
-                            <Share fontSize="small" className="post-icon share-icon" onClick={clickShare} style={{ "marginLeft": "0.2rem" }} />
+                            <Share fontSize="small" className={shareStyle} onClick={clickShare} style={{ "marginLeft": "0.2rem" }} />
                             <p className="p-post-numbers">{props.usersShared.length}</p>
                         </div>
-
                     </div>
-
                     <div style={{ "float": "right" }}>
                         <div style={{ "textAlign": "center" }}>
                             <ArrowUpward fontSize="medium" className={upvoteStyle} onClick={clickUpvote} style={{ "marginLeft": "0.2rem"}} />
                             <p className="p-post-numbers">{props.usersUpvoted.length}</p>
                         </div>
                     </div>
-                    
                 </div>
 
             </div>
