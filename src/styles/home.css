@@ -174,70 +174,36 @@
 
 /* coins add and balance */
 
-.fire-coin{
-    background-image:url(https://d3r6ceqp4shltl.cloudfront.net/assets/fire-coin_small-22c9cf075930f175532c837169d8b32130dafd9050eb81c102f8b30614e67f79.png)
+.container-coins {
+    padding: 1.5rem;
 }
 
-.coins .fire-coin {
+.balance-coins {
+    background-color: var(--gray-tag);
+    height: 1.5rem;
+    width: 5rem;
+    border-radius: 50px 15px 15px 50px;
+    display: flex;
+    text-align: center;
+}
+
+.div-coins-icon {
+    background-color: var(--black-background);
+    border-radius: 100%;
+    width: 1.3rem !important;
+    height: 1.3rem;
+    float: left;
+    margin-left: 0.1rem;
+    margin-top: 0.1rem;
+    margin-bottom: 0.1rem;
+}
+
+.add-upcoins-button {
     width: 1.5rem;
     height: 1.5rem;
-    float: left;
-    background-size: 1.5rem;
-}
-
-.coins {
-    font-weight: bold;
-    padding-right: 0.6rem;
-    height: 1.75rem;
-    width: 5.43rem;
-    line-height: 1.6rem;
-}
-
-.tab-coins {
-    top: 0.6rem;
-    padding: 0 1px;
-    height: 2.1rem;
-    border: 0;
-}
-
-.containerFuncoesPrincipais {
-    padding: 1.25rem;
-}
-
-.saldoCoins{
-    padding-top: 0 !important;
-    margin-left: 2.5rem;
-}
-
-.coins .coins-counter {
-    min-width: 2rem;
-    text-align: center;
-    float: left;
-    padding-left: 0.6rem;
-    color: rgb(12, 12, 12);
-}
-
-.coins, .coins_container .coins {
-    background-color: rgba(107, 97, 97, 0.2);
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 50%);
-    padding: 2px 0px 2px 3px;
-    border-radius: 15px 4px 4px 15px;
-}
-
-.icon-create-content {
-    background-color: #7300ff;
-    color: #fff;
-    position: relative;
-    width: 27px;
-    padding: 0 1px;
-    margin-left: 10px;
-    height: 28px;
-    top: 12px;
+    background-color: var(--pink-purple);
     border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    display: block;
-    line-height: 28px;
+    margin-left: 0.1rem;
 }
 
 /* post template on feed */
