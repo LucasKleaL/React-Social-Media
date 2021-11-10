@@ -52,9 +52,9 @@ function UpCoins() {
 
             <Typography variant="h1" style={title}>Up Coins</Typography>
 
-            <Grid container spacing={3} align="center" style={{"textAlign": "center", "marginTop": "2rem" }}> 
+            <Grid container spacing={2} align="center" style={{"textAlign": "center", "marginTop": "2rem" }}> 
 
-                <Grid item align="center" style={{"textAlign": "center" , "width": "33%"}}>     
+                <Grid item xs={4} align="center" style={{"textAlign": "center" , "width": "33%"}}>     
 
                     <img src={SetUpBlue} className="setup-icon" />
 
@@ -72,7 +72,7 @@ function UpCoins() {
                     
                 </Grid>
 
-                <Grid item style={{"textAlign": "center" , "width": "33%"}}> 
+                <Grid item xs={4} style={{"textAlign": "center" , "width": "33%"}}> 
 
                     <img src={SetUpPurple} className="setup-icon" />
 
@@ -90,7 +90,7 @@ function UpCoins() {
 
                 </Grid>
 
-                <Grid item style={{"textAlign": "center", "width": "33%"}}> 
+                <Grid xs={4} item style={{"textAlign": "center", "width": "33%"}}> 
 
                     <img src={SetUpGreen} className="setup-icon" />
 

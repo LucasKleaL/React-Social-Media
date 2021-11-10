@@ -115,11 +115,7 @@ function Paypal(props) {
                             saldo: saldo
                         })
                     })
-                },
-                onError: (err) => {
-                    console.log("error: "+err)
-                    alert("Houve um erro ao processar seu pagamento. Por favor aguarde um momento e tente novamente.")
-                },
+                }
             })
             .render(paypal.current)
         }
