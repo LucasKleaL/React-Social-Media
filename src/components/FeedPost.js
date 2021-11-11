@@ -1,4 +1,5 @@
 import { React, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import Firebase from "./../Firebase";
 import './../styles/home.css';
 
@@ -9,6 +10,11 @@ import ShareModal from "./ShareModal";
 import InterestTag from "./InterestTag";
 
 function FeedPost(props) {
+
+    const history = useHistory();
+
+    //props 
+    const [state, setState] = useState("");
 
     //post data
     const [authUserUid, setAuthUserUid] = useState();
@@ -74,7 +80,6 @@ function FeedPost(props) {
     async function getPostUserImg() {
         await Firebase.storage().ref("usuario").child(props.userUid).getDownloadURL()
         .then((url) => {
-            debugger
             setPostUserImg(url);
         });
     }
@@ -269,6 +274,13 @@ function FeedPost(props) {
         else {
             setShareStyle("post-icon share-icon");
         }
+      
+    function userProfileRedirect(uid) {
+        console.log("userProfileRedirect "+uid)
+        history.push({
+            pathname: "/profile",
+            data: uid
+        })
     }
 
     function printFeedPost() {
@@ -281,11 +293,11 @@ function FeedPost(props) {
                     </div>
                     <div class="div-post-profile-user">
                         <h2 className="h2-post-username">{props.name}</h2>
-                        <p className="p-post-username" id="username">{props.username}</p>
+                        <p className="p-post-username" id="username" onClick={() => {userProfileRedirect(props.userUid)}}>{props.username}</p>
                     </div>
                     <div>
                         <p className="p-post-time">{props.datetime}</p>                  
-                        {props.interestTag ? <InterestTag text={props.interestTag} styleClass="post-interest-tag" content="post-tag" /> : null }     
+                        { props.interestTag ? <InterestTag text={props.interestTag} styleClass="post-interest-tag" content="post-tag" /> : null }     
                     </div>
                 </div>
 

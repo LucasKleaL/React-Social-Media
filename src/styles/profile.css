@@ -1,0 +1,47 @@
+
+.profile-container {
+    width: 100%;
+    height: 10rem;
+    margin-top: 3rem;
+    background-color: var(--white);
+    border-radius: 20px;
+    display: flex;
+}
+
+.profile-attributes {
+    display: flex;
+    width: 80%;
+}
+
+.img-user {
+    height: 6rem;
+    width: 6rem;
+    margin-top: 2rem;
+    margin-left: 2rem;
+    border-radius: 100%;
+}
+
+.h2-username {
+    color: var(--black);
+    font-size: 1.5rem;
+    font-weight: medium;
+    text-align: left;
+}
+
+.p-username {
+    color: var(--gray-line);
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: medium;
+    text-align: left;
+}
+
+.div-profile-actions {
+    height: 100%;
+}
+
+.profile-actions-icon {
+    float: right;
+    margin-top: 2rem;
+    cursor: pointer;
+}
