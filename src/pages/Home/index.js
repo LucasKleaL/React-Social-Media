@@ -81,6 +81,12 @@ function HomePage() {
             getPostsByInterest(element)
         });
     }, [saldo]);
+
+    useEffect(() => {
+        interesses.forEach(element => {
+            getPostsByInterest(element)
+        });
+    }, [isPosted]);
     
 
     function signOut() {
@@ -292,8 +298,8 @@ function HomePage() {
                         <input type="file" id="addPostImg" style={{ "display": "none" }} onChange={(e) => { getPostImgFromInput(e) }} />
                         <label for="addPostImg">
                             <AddPhotoAlternate fontSize="small" className="post-icons" />
+                            <AddAPhoto fontSize="small" className="post-icons" />
                         </label>
-                        <AddAPhoto fontSize="small" className="post-icons" />
                         <InsertEmoticon fontSize="small" className="post-icons" />
 
                         <select className="select-post-tag" onChange={(e) => { setPostTag(e.target.value) }}>
@@ -319,8 +325,6 @@ function HomePage() {
 
                 <div class="div-timeline">
                     {
-
-
                         postsData.map(post => {
 
                             return (
@@ -351,7 +355,7 @@ function HomePage() {
                     <Settings className="header-icon" title="Configurações" />
                     <NotificationsNone className="header-icon" title="Notificações" />
                     <Search className="header-icon" title="Pesquisar" />
-                    <Home className="header-icon" title="Home Page" title="Página Inicial" />
+                    <Home className="header-icon" title="Home Page" style={{"color": "var(--pink-purple)"}} />
                     
                 </div>
 
