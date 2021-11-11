@@ -279,7 +279,7 @@ function FeedPost(props) {
                                 saldo: saldo + 150
                             })
                     }) 
-                    setLikeActive(true);
+                    setUpvoteActive(true);
                 }else{
                     alert("Saldo de UpCoins insuficiente");
                 }
