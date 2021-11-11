@@ -4,9 +4,7 @@ import Firebase from "./../Firebase";
 import './../styles/home.css';
 
 import { Whatshot, Share, ArrowUpward }from '@material-ui/icons';
-import Modal from '@material-ui/core/Modal';
 
-import ShareModal from "./ShareModal";
 import InterestTag from "./InterestTag";
 
 function FeedPost(props) {
@@ -95,6 +93,7 @@ function FeedPost(props) {
 
         let usersLiked = props.usersLiked;
         let liked = false;
+        let xp = userData.xp;
 
         for (var i = 0; i < usersLiked.length; i++) {
             if (usersLiked[i] == authUserUid) {
@@ -110,17 +109,29 @@ function FeedPost(props) {
         if (liked) {
             setLikeActive(false);
             usersLiked.splice(usersLiked.indexOf(authUserUid), 1)
+            xp = xp - 1;
             await Firebase.firestore().collection("posts").doc(props.postUid)
             .update({
-                users_liked: usersLiked
-            })
+                users_liked: usersLiked,
+
+            });
+            await Firebase.firestore().collection("usuario").doc(props.userUid)
+            .update({
+                xp: xp
+            });
         }
         else {
             setLikeActive(true);
             usersLiked.push(authUserUid);
+            xp = xp + 1;
             await Firebase.firestore().collection("posts").doc(props.postUid)
             .update({
-                users_liked: usersLiked
+                users_liked: usersLiked,
+                
+            });
+            await Firebase.firestore().collection("usuario").doc(props.userUid)
+            .update({
+                xp: xp
             });
         }
     }
@@ -175,6 +186,8 @@ function FeedPost(props) {
             userShares = userData.shared_posts;
             userShares.push(props.postUid);
 
+            let xp = userData.xp + 1;
+
             usersShared.push(authUserUid);
             await Firebase.firestore().collection("usuario").doc(authUserUid).get()
             .then((snapshot) => {            
@@ -182,7 +195,8 @@ function FeedPost(props) {
                     users_shared: usersShared
                 });
                 Firebase.firestore().collection("usuario").doc(authUserUid).update({
-                    shared_posts: userShares
+                    shared_posts: userShares,
+                    xp: xp
                 });
                 setShareActive(true);
             })
@@ -238,13 +252,15 @@ function FeedPost(props) {
             .then((snapshot) => {
                 saldo = snapshot.data().saldo;
                 let totalDoado = snapshot.data().total_doado;
+                let xp = snapshot.data().xp + 15;
                 if(saldo >= 200){
                     saldo = saldo - 200;
                     totalDoado = totalDoado + 200;
                     Firebase.firestore().collection("usuario").doc(authUserUid)
                             .update({
                                 saldo: saldo,
-                                total_doado: totalDoado
+                                total_doado: totalDoado,
+                                xp: xp
                             })
                     Firebase.firestore().collection("posts").doc(props.postUid)
                             .update({

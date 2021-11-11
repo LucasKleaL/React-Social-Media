@@ -6,8 +6,10 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import Firebase from "./../../Firebase";
 
 import {
-    PersonAdd, Settings 
+    Settings 
 } from '@material-ui/icons';
+
+import FeedPost from "../../components/FeedPost";
 
 import FirstPost from "./../../public/achievements/first_post.png";
 import FirstUp from "./../../public/achievements/first_up.png";
@@ -86,7 +88,7 @@ function Profile(props) {
                 Firebase.firestore().collection("usuario").doc(uid).get()
                     .then((snapshot) => {
                         setProfileData(snapshot.data());
-                        setProfileSharedPosts(snapshot.data().shared_posts);
+                        getProfilePosts(snapshot.data().shared_posts);
                         setProfileInterests(snapshot.data().interesses);
                         setProfileDonations(snapshot.data().total_doado);
                         setProfileXp(snapshot.data().xp);
@@ -105,6 +107,20 @@ function Profile(props) {
             .then((url) => {
                 setProfileImg(url);
         });
+    }
+
+    async function getProfilePosts(posts) {
+
+        for (let i = 0; i < posts.length; i++) {
+            Firebase.firestore().collection("posts").doc(posts[i]).get()
+            .then((snapshot) => {
+                let snapshotArray = [];
+                snapshotArray.push([snapshot.data(), snapshot.id])
+                setProfileSharedPosts(snapshotArray)
+                
+            });
+        }
+
     }
 
     function getProfileLevel(xp) {
@@ -161,79 +177,106 @@ function Profile(props) {
 
     return (
 
-        <Container maxwidth="lg" align="center" className="container">
+        <Container maxwidth="lg" align="center" >
 
-            <div className="profile-container">
+            <div className="container">
 
-                <div className="profile-attributes">
+                <div className="profile-container">
 
-                    <img className="img-user" src={profileImg}/>
+                    <div className="profile-attributes">
 
-                    <div style={{ "marginTop": "2rem", "marginLeft": "1rem" }}>
+                        <img className="img-user" src={profileImg} />
 
-                        <h2 className="h2-username">{profileData.nome}</h2>
-                        <p className="p-username">@{profileData.usuario}</p>
+                        <div style={{ "marginTop": "2rem", "marginLeft": "1rem" }}>
 
-                        <div style={{"display": "flex"}}>
+                            <h2 className="h2-username">{profileData.nome}</h2>
+                            <p className="p-username">@{profileData.usuario}</p>
 
-                            {
-                                profileInterests.map(interest => {
-                                    return (
-                                        
-                                        <div className="interest-tag-profile">
-                                            <p className="interest-tag-text">{interest}</p>
-                                        </div>
+                            <div style={{ "display": "flex" }}>
 
-                                    )
-                                })
-                            }
-                            
+                                {
+                                    profileInterests.map(interest => {
+                                        return (
+
+                                            <div className="interest-tag-profile">
+                                                <p className="interest-tag-text">{interest}</p>
+                                            </div>
+
+                                        )
+                                    })
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div className="div-profile-actions">
+                        {
+                            sameUser ? (<Settings className="profile-actions-icon" />) : (null)
+                        }
+                    </div>
+
+                </div>
+
+                <div className="profile-achievements">
+
+                    <div className="div-achievements">
+                        <Typography variant="h6" >@{profileData.usuario}'s Achievements</Typography>
+                        <Grid container style={{ "paddingTop": "0.8rem" }}>
+                            <Grid item>
+
+                                {profileSharedPosts.length >= 1 ? (<img src={FirstPost} className="achievement-icon" title="Meu primeiro post na SetUp!" alt="Primeiro post" />) : (null)}
+                                {profileDonations >= 200 ? (<img src={FirstUp} className="achievement-icon" title="Eu impulsionei um post!" alt="Eu impulsionei um post" />) : (null)}
+                                {profileDonations >= 1000 ? (<img src={ThousandCoins} className="achievement-icon" title="Eu já gastei mil UpCoins!" alt="Eu já gastei mil UpCoins" />) : (null)}
+                                {profileXp >= 1000 ? (<img src={LevelFive} className="achievement-icon" title="Eu atingi o level 5!" alt="Level 5" />) : (null)}
+
+                            </Grid>
+                        </Grid>
+                    </div>
+
+                </div>
+
+                <div className="profile-level">
+
+                    <div className="level">
+                        <Typography variant="p" className="p-level">{profileLevel}</Typography>
+                    </div>
+
+                    <div style={{ "marginLeft": "1rem" }}>
+                        <Typography variant="h6" className="h6-level">Level {profileLevel}</Typography>
+
+                        <div className="experience-bar">
+                            <div style={progressBar}></div>
                         </div>
 
                     </div>
 
                 </div>
 
-                <div className="div-profile-actions">
-                    {
-                        sameUser ? (<Settings className="profile-actions-icon"/>) : (<PersonAdd className="profile-actions-icon" />)
-                    }
-                </div>
-
             </div>
 
-            <div className="profile-achievements">
+            <div className="profile-posts">
 
-                <div className="div-achievements">
-                    <Typography variant="h6" >@{profileData.usuario}'s Achievements</Typography>
-                    <Grid container style={{ "paddingTop": "0.8rem" }}>
-                        <Grid item>
-
-                            { profileSharedPosts.length >= 1 ? (<img src={FirstPost} className="achievement-icon" title="Meu primeiro post na SetUp!" alt="Primeiro post" />) : (null) }
-                            { profileDonations >= 200 ? (<img src={FirstUp} className="achievement-icon" title="Eu impulsionei um post!" alt="Eu impulsionei um post"/>) : (null) }
-                            { profileDonations >= 1000 ? (<img src={ThousandCoins} className="achievement-icon" title="Eu já gastei mil UpCoins!" alt="Eu já gastei mil UpCoins"/>) : (null) }
-                            { profileXp >= 1000 ? (<img src={LevelFive} className="achievement-icon" title="Eu atingi o level 5!" alt="Level 5"/>) : (null) }
-
-                        </Grid>
-                    </Grid>
-                </div>
-
-            </div>
-
-            <div className="profile-level">
-                
-                <div className="level">
-                    <Typography variant="p" className="p-level">{profileLevel}</Typography>
-                </div>
-
-                <div style={{ "marginLeft": "1rem" }}>
-                    <Typography variant="h6" className="h6-level">Level {profileLevel}</Typography>
-
-                    <div className="experience-bar"> 
-                        <div style={progressBar}></div>
-                    </div>
-
-                </div>
+                {
+                    profileSharedPosts.map(post => {
+                        return (
+                            <FeedPost 
+                                postUid={post[1]}
+                                userUid={post[0].user_uid}
+                                name={post[0].user_name}
+                                username={"@" + post[0].username}
+                                datetime={post[0].post_datetime}
+                                interestTag={post[0].post_tagMultiple}
+                                description={post[0].post_description}
+                                usersLiked={post[0].users_liked}
+                                usersShared={post[0].users_shared}
+                                usersUpvoted={post[0].users_upvoted}
+                            />
+                        )
+                    })
+                }
                 
             </div>
 

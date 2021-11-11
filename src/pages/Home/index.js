@@ -142,8 +142,11 @@ function HomePage() {
             userShares = userData.shared_posts;
             userShares.push(postUid)
 
+            let xp = userData.xp;
+
             Firebase.firestore().collection("usuario").doc(userUid).update({
-                shared_posts: userShares
+                shared_posts: userShares,
+                xp: (xp + 10)
             });
 
             interesses.forEach(element => {
@@ -235,6 +238,13 @@ function HomePage() {
         setPostImg(file);
     }
 
+    function userProfileRedirect(uid) {
+        history.push({
+            pathname: "/profile",
+            data: uid
+        })
+    }
+
     return (
 
         <div className="div-container-home">
@@ -255,7 +265,7 @@ function HomePage() {
 
                     <div className="div-profile-username">
                         <h2 className="h2-username">{userData.nome}</h2>
-                        <p className="p-username">@{userData.usuario}</p>
+                        <p className="p-username" onClick={() => userProfileRedirect(userUid)}>@{userData.usuario}</p>
                     </div>
 
                 </div>

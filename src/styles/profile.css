@@ -78,6 +78,7 @@
 .profile-level {
     display: flex;
     margin-left: 2rem;
+    padding-bottom: 1rem;
 }
 
 .level {
@@ -105,3 +106,14 @@
     background-color: var(--gray-tag);
     margin-top: 0.5rem;
 }
+
+.profile-posts {
+    width: 50%;
+    margin-top: 0.5rem;
+    align-items: center; 
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+} 
