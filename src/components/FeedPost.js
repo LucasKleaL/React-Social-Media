@@ -274,6 +274,7 @@ function FeedPost(props) {
         else {
             setShareStyle("post-icon share-icon");
         }
+    }
       
     function userProfileRedirect(uid) {
         console.log("userProfileRedirect "+uid)
@@ -341,5 +342,6 @@ function FeedPost(props) {
     )
 
 }
+
 
 export default FeedPost;
