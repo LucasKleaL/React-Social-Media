@@ -57,8 +57,13 @@
     cursor: pointer;
 }
 
+.header-icon:hover {
+    color: var(--pink-purple);
+}
+
 .header-icon:active {
     color: var(--pink-purple);
+    padding-bottom: 0.1rem;
 }
 
 /* user profile on home page */

@@ -81,6 +81,7 @@ function RegistrationForm() {
             interesses: interesses,
             saldo: 1000,
             total_doado: 0,
+            xp: 0,
             shared_posts: [],
             registration_datetime: datetime
           })
