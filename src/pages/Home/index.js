@@ -81,6 +81,12 @@ function HomePage() {
             getPostsByInterest(element)
         });
     }, [saldo]);
+
+    useEffect(() => {
+        interesses.forEach(element => {
+            getPostsByInterest(element)
+        });
+    }, [isPosted]);
     
 
     function signOut() {
