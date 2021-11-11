@@ -137,6 +137,15 @@ function HomePage() {
         }).then((docRef) => {
             postUid = docRef.id;
             setIsPosted(true);
+
+            let userShares = [];
+            userShares = userData.shared_posts;
+            userShares.push(postUid)
+
+            Firebase.firestore().collection("usuario").doc(userUid).update({
+                shared_posts: userShares
+            });
+
             interesses.forEach(element => {
                 Firebase.firestore().collection("interesse").doc(element).update({
                     idPosts: Firebase.firestore.FieldValue.arrayUnion(postUid)

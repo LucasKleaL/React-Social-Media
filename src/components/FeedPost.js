@@ -18,6 +18,7 @@ function FeedPost(props) {
 
     //post data
     const [authUserUid, setAuthUserUid] = useState();
+    const [userData, setUserData] = useState();
     const [postImg, setPostImg] = useState();
     const [postUserImg, setPostUserImg] = useState();
 
@@ -36,6 +37,8 @@ function FeedPost(props) {
 
     useEffect(() => {
         getAuth();
+        getPostImg();
+        getPostUserImg();
     }, []);
 
     useEffect(() => {
@@ -50,15 +53,11 @@ function FeedPost(props) {
         isShared(authUserUid);
     }, [shareActive])
 
-    useEffect(() => {   
-        getPostImg();
-        getPostUserImg();
-    });
-
     async function getAuth() {
         Firebase.auth().onAuthStateChanged((user)=>{
             if(user){
                 setAuthUserUid(user.uid);
+                getUserData(user.uid);
                 isLiked(user.uid);
                 isShared(user.uid);
                 isUpvoted(user.uid);
@@ -70,6 +69,14 @@ function FeedPost(props) {
             }
         });
     }
+
+    async function getUserData(uid) {
+        await Firebase.firestore().collection("usuario").doc(uid).get()
+        .then((snapshot) => {
+            setUserData(snapshot.data());
+        })
+    }
+
     async function getPostImg() {
         await Firebase.storage().ref("posts").child(props.postUid).getDownloadURL()
         .then((url) => {
@@ -160,17 +167,47 @@ function FeedPost(props) {
             alert("Você já compartilhou este post!")
         }
         else {
-            var saldo = 0;
-            var autorId = "";
+            let saldo = 0;
+            let autorId = "";
+
+            //send post uid to user posts own array
+            let userShares = [];
+            userShares = userData.shared_posts;
+            userShares.push(props.postUid);
+
             usersShared.push(authUserUid);
             await Firebase.firestore().collection("usuario").doc(authUserUid).get()
             .then((snapshot) => {            
-                Firebase.firestore().collection("posts").doc(props.postUid)
-                        .update({
-                        users_shared: usersShared
-                        })
+                Firebase.firestore().collection("posts").doc(props.postUid).update({
+                    users_shared: usersShared
+                });
+                Firebase.firestore().collection("usuario").doc(authUserUid).update({
+                    shared_posts: userShares
+                });
                 setShareActive(true);
             })
+        }
+    }
+
+    function isShared(uid) {
+        let usersShared = props.usersShared;
+        let shared = false;
+
+        for (var i = 0; i < usersShared.length; i++) {
+            if (usersShared[i] == uid) {
+                shared = true;
+                break;
+            }
+            else {
+                continue;
+            }
+        }
+
+        if (shared) {
+            setShareStyle("post-icon share-icon-active");
+        }
+        else {
+            setShareStyle("post-icon share-icon");
         }
     }
 
@@ -200,11 +237,14 @@ function FeedPost(props) {
             await Firebase.firestore().collection("usuario").doc(authUserUid).get()
             .then((snapshot) => {
                 saldo = snapshot.data().saldo;
-                if(saldo >= 150){
-                    saldo = saldo - 150;
+                let totalDoado = snapshot.data().total_doado;
+                if(saldo >= 200){
+                    saldo = saldo - 200;
+                    totalDoado = totalDoado + 200;
                     Firebase.firestore().collection("usuario").doc(authUserUid)
                             .update({
-                                saldo: saldo
+                                saldo: saldo,
+                                total_doado: totalDoado
                             })
                     Firebase.firestore().collection("posts").doc(props.postUid)
                             .update({
@@ -220,12 +260,12 @@ function FeedPost(props) {
                         autorId = snapshot.data().user_uid;
                         Firebase.firestore().collection("usuario").doc(autorId)
                             .update({
-                                saldo: saldo + 100
+                                saldo: saldo + 150
                             })
                     }) 
                     setLikeActive(true);
                 }else{
-                    alert("Saldo insuficiente")
+                    alert("Saldo de UpCoins insuficiente");
                 }
             })
         }
@@ -251,28 +291,6 @@ function FeedPost(props) {
         }
         else {
             setUpvoteStyle("post-icon up-icon");
-        }
-    }
-
-    function isShared(uid) {
-        let usersShared = props.usersShared;
-        let shared = false;
-
-        for (var i = 0; i < usersShared.length; i++) {
-            if (usersShared[i] == uid) {
-                shared = true;
-                break;
-            }
-            else {
-                continue;
-            }
-        }
-
-        if (shared) {
-            setShareStyle("post-icon share-icon-active");
-        }
-        else {
-            setShareStyle("post-icon share-icon");
         }
     }
       
