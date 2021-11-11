@@ -5,9 +5,9 @@ import '../../styles/home.css';
 
 import {
     Home, Search, NotificationsNone, Settings, InsertEmoticon,
-    AddPhotoAlternate, AddAPhoto, Add, ExitToApp
+    AddPhotoAlternate, AddAPhoto, Add, ExitToApp, ArrowUpward
 } from '@material-ui/icons';
-import { Button, Grid } from "@material-ui/core";
+import { Button, Grid, Typography } from "@material-ui/core";
 
 import InterestTag from "../../components/InterestTag";
 import FeedPost from "../../components/FeedPost";
@@ -17,13 +17,16 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { LinkedCameraSharp } from "@mui/icons-material";
 
 function HomePage() {
+
     var history = useHistory();
+
     //user data bring from firebase
     const [userData, setUserData] = useState("");
     const [userUid, setUserUid] = useState("")
     const [interesses, setInteresses] = useState([]);
     const [userImg, setUserImg] = useState();
     const [saldo, setSaldo] = useState();
+
     //new post attributes
     const tagInterests = [
         'Esportes',
@@ -52,7 +55,6 @@ function HomePage() {
                 let uid = user.uid;
                 Firebase.firestore().collection("usuario").doc(uid).get()
                     .then((snapshot) => {
-                        debugger
                         console.log(snapshot.data());
                         setUserData(snapshot.data());
                         setInteresses(snapshot.data().interesses)
@@ -135,6 +137,18 @@ function HomePage() {
         }).then((docRef) => {
             postUid = docRef.id;
             setIsPosted(true);
+
+            let userShares = [];
+            userShares = userData.shared_posts;
+            userShares.push(postUid)
+
+            let xp = userData.xp;
+
+            Firebase.firestore().collection("usuario").doc(userUid).update({
+                shared_posts: userShares,
+                xp: (xp + 10)
+            });
+
             interesses.forEach(element => {
                 Firebase.firestore().collection("interesse").doc(element).update({
                     idPosts: Firebase.firestore.FieldValue.arrayUnion(postUid)
@@ -224,6 +238,13 @@ function HomePage() {
         setPostImg(file);
     }
 
+    function userProfileRedirect(uid) {
+        history.push({
+            pathname: "/profile",
+            data: uid
+        })
+    }
+
     return (
 
         <div className="div-container-home">
@@ -244,7 +265,7 @@ function HomePage() {
 
                     <div className="div-profile-username">
                         <h2 className="h2-username">{userData.nome}</h2>
-                        <p className="p-username">@{userData.usuario}</p>
+                        <p className="p-username" onClick={() => userProfileRedirect(userUid)}>@{userData.usuario}</p>
                     </div>
 
                 </div>
@@ -335,18 +356,30 @@ function HomePage() {
                 </div>
 
                 <div>
-                    <Grid container spacing={2} className="containerFuncoesPrincipais">
-                            <Grid item xs={2} className="saldoCoins">
-                                <a title="Saldo" class="tab-coins"><div class="coins"><span class="fire-coin"
-                                style={{
-                                    backgroundImage: "url(" + "https://d3r6ceqp4shltl.cloudfront.net/assets/fire-coin_small-22c9cf075930f175532c837169d8b32130dafd9050eb81c102f8b30614e67f79.png" + ")",
-                                }}>
-                                </span><span class="coins-counter">{userData.saldo}</span></div></a>
-                            </Grid>
-                            <Grid item xs={1}>
-                                <Link to="/upcoins"><a title="Recarregar UpCoins" class="icon-create-content" ><AddRoundedIcon style={{ "marginTop": "0.1rem", "marginLeft": "0.05rem" }} /></a></Link>
-                            </Grid>
+
+                    <Grid container className="container-coins">
+
+                        <Grid item>
+                            <div className="balance-coins" title="Seu saldo de UpCoins">
+                                <div className="div-coins-icon">
+                                    <ArrowUpward fontSize="small" style={{ "color": "var(--green-up)" }}/>
+                                </div>
+                                <div style={{ "textAlign": "center", "width": "3.7rem", "height": "100%", "marginTop": "0.1rem" }}>
+                                    <Typography variant="p">{saldo}</Typography>
+                                </div> 
+                            </div>
+                        </Grid>
+
+                        <Grid item>
+                            <Link to="/upcoins">
+                                <div className="add-upcoins-button" title="Regarregar UpCoins">
+                                    <AddRoundedIcon style={{ "color": "white" }} />
+                                </div>
+                            </Link>
+                        </Grid>
+
                     </Grid>
+                    
                 </div>
 
             </div>

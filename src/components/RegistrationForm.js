@@ -61,6 +61,15 @@ function RegistrationForm() {
 }, []);
   
   function cadastrar() {
+    let date = new Date();
+    let datetime = date.toLocaleDateString("pt-br", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    });
     firebase.auth().createUserWithEmailAndPassword(email, senha)
       .then((value) => {
         firebase.firestore().collection("usuario").doc(value.user.uid)
@@ -70,7 +79,11 @@ function RegistrationForm() {
             dataNascimento: dataNascimento,
             genero: genero,
             interesses: interesses,
-            saldo: 1000
+            saldo: 1000,
+            total_doado: 0,
+            xp: 0,
+            shared_posts: [],
+            registration_datetime: datetime
           })
           interesses.forEach(element => {
           firebase.firestore().collection("interesse").doc(element)
