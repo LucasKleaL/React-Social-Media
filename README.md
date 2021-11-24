@@ -1,3 +1,32 @@
+# SetUp
+
+Setup is a social media based on the bubble of interests between users, that create a post generation separated by interests tags chosen by the user in the registration form.
+
+## Implemented features
+
+### Make a new post
+Any user can create a post since he logged in. The post can be only text or contain one image.
+
+### Like post
+Every post will have a like button accessible for all users can interact, for each click of like the user who gives will get 1xp.
+
+### Up Vote
+Different from like, one Up Vote cost 200 Up Coins. The Up Vote feature is focused on donating coins and boosting the post on platform reach, the post creator will gain 150 coins of each Up Vote, and the other 50 coins will be directed to the platform as a fee.
+
+### Up Coin
+Up Coin is the platform value used to create an ecosystem of interaction on each post, because the coins will flow between the users, encouraging to the users make new interesting to get coins to direct them to their favorite creators. Users can add Up Coins on their profile paying for recharges, now the only payment method implemented is Paypal.
+
+### Share post
+Users can share posts created by another's users, but the post will only be listed on his profile, not in the main dashboard feed and the Up Voted made on the shared post will be redirected to the original post creator.
+
+### Xp levels
+The user's profiles show the current level and xp amount, and on all interactions between users generate xp on different values. When some levels are reached the user will receive an achievement and he will be displayed on the user public profile.
+
+### Achievements
+On the profile page in the level section, all user's achievements will be shown. The achievements are variated since the first post made or first upvoted clicked.
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
