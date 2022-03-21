@@ -25,7 +25,28 @@ The user's profiles show the current level and xp amount, and on all interaction
 ### Achievements
 On the profile page in the level section, all user's achievements will be shown. The achievements are variated since the first post made or first upvoted clicked.
 
+## SetUp App demonstration
 
+### Landing page
+<img alt="SetUp landing page" src="https://github.com/LucasKleaL/SetUp/blob/main/public/app-demo/setup_ladingpage.jpg" >
+
+### Home page
+<img alt="SetUp home page" src="https://github.com/LucasKleaL/SetUp/blob/main/public/app-demo/setup_homepage.JPG" >
+
+### User profile page
+<img alt="SetUp user profile page" src="https://github.com/LucasKleaL/SetUp/blob/main/public/app-demo/setup_profile.jpg" >
+
+### New post creation
+<img alt="SetUp new post" src="https://github.com/LucasKleaL/SetUp/blob/main/public/app-demo/setup_newpost.JPG" >
+
+### Up coins page
+<img  alt="SetUp Up coins page" src="https://github.com/LucasKleaL/SetUp/blob/main/public/app-demo/setup_upcoins.jpg" >
+
+### Signup page
+<img alt="SetUp signup page"  src="https://github.com/LucasKleaL/SetUp/blob/main/public/app-demo/setup_signup.jpg" >
+
+### Login page
+<img  alt="SetUp login page" src="https://github.com/LucasKleaL/SetUp/blob/main/public/app-demo/setup_login.jpg" >
 
 # Getting Started with Create React App
 
